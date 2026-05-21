@@ -5,24 +5,25 @@ import { Search, Filter } from 'lucide-react';
 
 interface MenuPanelProps {
   onSelectItem: (item: MenuItem) => void;
+  foodDatabase?: MenuItem[];
 }
 
 type TabType = 'all' | 'klassiker' | 'snacks_beilagen' | 'getraenke' | 'saucen_dips' | 'fruehstueck';
 
-export function MenuPanel({ onSelectItem }: MenuPanelProps) {
+export function MenuPanel({ onSelectItem, foodDatabase = FOOD_DATABASE }: MenuPanelProps) {
   const [activeTab, setActiveTab] = useState<TabType>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Search and filter logic
   const filteredMenu = React.useMemo(() => {
-    return FOOD_DATABASE.filter((item) => {
+    return foodDatabase.filter((item) => {
       const matchesTab = activeTab === 'all' || item.category === activeTab;
       const matchesSearch =
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
       return matchesTab && matchesSearch;
     });
-  }, [activeTab, searchQuery]);
+  }, [foodDatabase, activeTab, searchQuery]);
 
   return (
     <div className="max-w-md mx-auto px-4 py-3 space-y-4 animate-pop">

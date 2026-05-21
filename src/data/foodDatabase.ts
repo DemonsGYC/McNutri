@@ -336,3 +336,61 @@ export const FOOD_DATABASE: MenuItem[] = [
     ]
   }
 ];
+
+export const REMOTE_DB_URL = "https://your-api.com/mcd_de_db.json";
+
+/**
+ * Attempts to asynchronously fetch the latest German McDonald's database from the remote URL.
+ * If successful, caches the result in localStorage and updates the state.
+ * If network or format errors occur, gracefully falls back to localStorage cache, or default statics.
+ */
+export async function initializeDatabase(): Promise<MenuItem[]> {
+  try {
+    // Set a timeout using AbortController to prevent infinite loading on bad networks
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    const response = await fetch(REMOTE_DB_URL, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const latestData = await response.json();
+
+    // Structurally validate that we received a non-empty array of MenuItems
+    if (Array.isArray(latestData) && latestData.length > 0 && latestData[0].id) {
+      try {
+        localStorage.setItem('mcd_de_food_db', JSON.stringify(latestData));
+      } catch (storageError) {
+        console.warn('Failed to write fetched database to localStorage cache:', storageError);
+      }
+      return latestData;
+    } else {
+      throw new Error('Fetched data did not pass MenuItem verification.');
+    }
+  } catch (error) {
+    console.warn('Failed to fetch remote database, falling back to cache:', error);
+    return getCachedDatabase();
+  }
+}
+
+/**
+ * Synchronously retrieves the cached database from localStorage to prevent screen flash.
+ */
+export function getCachedDatabase(): MenuItem[] {
+  try {
+    const cached = localStorage.getItem('mcd_de_food_db');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (cacheError) {
+    console.warn('Failed to read database cache from localStorage:', cacheError);
+  }
+  return FOOD_DATABASE;
+}
+

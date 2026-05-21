@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { MenuItem, TrayItem } from './types';
 import { MenuPanel } from './components/MenuPanel';
 import { CustomDrawer } from './components/CustomDrawer';
+import { initializeDatabase, getCachedDatabase } from './data/foodDatabase';
 import { Copy, Trash2, Check, HelpCircle, Utensils } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -24,10 +25,18 @@ const SIZE_LABELS: Record<string, string> = {
 };
 
 export function App() {
+  const [foodDatabase, setFoodDatabase] = useState<MenuItem[]>(getCachedDatabase);
   const [trayItems, setTrayItems] = useState<TrayItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [copied, setCopied] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+
+  useEffect(() => {
+    // On App mount, fetch the latest database with caching and disaster-recovery logic
+    initializeDatabase().then((db) => {
+      setFoodDatabase(db);
+    });
+  }, []);
 
   // Add customized item from Drawer to calculate tray
   const handleAddTrayItem = (
@@ -370,7 +379,7 @@ export function App() {
         </div>
 
         {/* Menu Grid Selection Area */}
-        <MenuPanel onSelectItem={setSelectedItem} />
+        <MenuPanel onSelectItem={setSelectedItem} foodDatabase={foodDatabase} />
 
       </main>
 
