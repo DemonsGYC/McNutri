@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+:root {
+  --apple-bg: #f5f5f7;
+  --apple-card-bg: rgba(255, 255, 255, 0.8);
+  --apple-text-primary: #1d1d1f;
+  --apple-text-secondary: #86868b;
+  --apple-border: rgba(0, 0, 0, 0.05);
+  
+  --color-protein: #2f80ed;
+  --color-fat: #f2c94c;
+  --color-carbs: #27ae60;
+  --color-sodium: #eb5757;
+  
+  font-family: var(--font-sans);
+  background-color: var(--apple-bg);
+  color: var(--apple-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --apple-bg: #000000;
+    --apple-card-bg: rgba(28, 28, 30, 0.8);
+    --apple-text-primary: #f5f5f7;
+    --apple-text-secondary: #8e8e93;
+    --apple-border: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: var(--apple-card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--apple-border);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Elegant Switch transition */
+.switch-dot {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Number animation helper */
+@keyframes odometer-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-90%);
+  }
+}
+
+/* Ring pulse animation for remaining calories */
+@keyframes ring-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(47, 128, 237, 0.2);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(47, 128, 237, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(47, 128, 237, 0);
+  }
+}
+
+.pulse-ring {
+  animation: ring-pulse 2s infinite;
+}
+
+/* Subtle micro-animation when items are added */
+@keyframes pop-in {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-pop {
+  animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Fade-in animation for modal backdrop */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out forwards;
+}
+
+/* Floating bottom nav shadow */
+.floating-nav {
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .floating-nav {
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
+  }
+}
