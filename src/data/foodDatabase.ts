@@ -8,7 +8,7 @@ export const FOOD_DATABASE: MenuItem[] = [
     category: 'klassiker',
     base_calories: 420,
     description: 'Pflanzenbasiertes Patty, vegane Schmelzkäsezubereitung, frischer Salat, Tomaten, Gurken und die legendäre Sandwich-Soße.',
-    imageUrl: 'https://s7d1.scene7.com/is/image/mcdonalds/DC_202012_0383_McPlant_832x472',
+    imageUrl: 'https://s7d1.scene7.com/is/image/mcdonalds/DC_202109_4323_McPlant_832x472',
     atoms: [
       { id: 'mcplant_bun', name: '经典面包 (McPlant-Bun)', type: 'carb', calories: 150, protein: 5.2, fat: 1.8, carbs: 28, salt: 0.45, removable: false, default: true },
       { id: 'mcplant_patty', name: '植物肉饼 (Pflanzenbasiertes Patty)', type: 'base', calories: 135, protein: 15.6, fat: 7.8, carbs: 2.1, salt: 0.58, removable: false, default: true },
@@ -25,7 +25,7 @@ export const FOOD_DATABASE: MenuItem[] = [
     category: 'klassiker',
     base_calories: 850,
     description: 'Saftiges Rindfleisch, herzhafter Bacon, zart schmelzender Käse, frische Tomaten, Salat und die unverwechselbare Big Tasty Rauchsoße.',
-    imageUrl: 'https://s7d1.scene7.com/is/image/mcdonalds/h-mcdonalds-Big-Tasty-Bacon',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/McDonald%27s_Big_Tasty_Bacon.jpg/640px-McDonald%27s_Big_Tasty_Bacon.jpg',
     atoms: [
       { id: 'bigtasty_bun', name: '大面包 (Big Tasty Bun)', type: 'carb', calories: 240, protein: 8.2, fat: 4.8, carbs: 41, salt: 0.78, removable: false, default: true },
       { id: 'bigtasty_beef', name: '纯牛肉饼 (Rindfleischpatty)', type: 'base', calories: 250, protein: 25, fat: 16.5, carbs: 0, salt: 0.42, removable: false, default: true },
@@ -42,7 +42,7 @@ export const FOOD_DATABASE: MenuItem[] = [
     category: 'klassiker',
     base_calories: 485,
     description: 'Herzhaftes Schweinefleischpatty, würzige McRip-Soße, knackige Zwiebeln und Gurkenscheiben auf einem länglichen Brötchen.',
-    imageUrl: 'https://s7d1.scene7.com/is/image/mcdonalds/h-mcdonalds-McRib',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/McD-McRib.jpg/640px-McD-McRib.jpg',
     atoms: [
       { id: 'mcrip_bun', name: '麦肋排长Brötchen (McRip-Brötchen)', type: 'carb', calories: 175, protein: 6.2, fat: 2.6, carbs: 32, salt: 0.56, removable: false, default: true },
       { id: 'mcrip_pork', name: '经典猪肉排 (Schweinefleischpatty)', type: 'base', calories: 225, protein: 18.2, fat: 16.2, carbs: 0.6, salt: 0.52, removable: false, default: true },
@@ -91,7 +91,7 @@ export const FOOD_DATABASE: MenuItem[] = [
     category: 'klassiker',
     base_calories: 536,
     description: 'Bestehend aus Rindfleischpatty, Käse, frischem Salat, Tomaten, Zwiebeln und cremiger Sandwich-Soße.',
-    imageUrl: 'https://s7d1.scene7.com/is/image/mcdonalds/h-mcdonalds-Hamburger-Royal-TS',
+    imageUrl: 'https://s7d1.scene7.com/is/image/mcdonalds/DC_201907_0114_QuarterPounderwithCheeseDeluxe_832x472',
     atoms: [
       { id: 'royalts_bun', name: '皇家芝麻面包 (Royal Bun)', type: 'carb', calories: 165, protein: 5.2, fat: 2.0, carbs: 31, salt: 0.45, removable: false, default: true },
       { id: 'royalts_beef', name: '皇家大牛肉饼 (Large Beef-Patty)', type: 'base', calories: 210, protein: 20.8, fat: 14.5, carbs: 0, salt: 0.69, removable: false, default: true },
@@ -180,7 +180,7 @@ export const FOOD_DATABASE: MenuItem[] = [
     category: 'snacks_beilagen',
     base_calories: 406,
     description: 'Knusprig und herzhaft gewürzte Kartoffel-Gitter. Der absolute Liebling als Special-Beilage.',
-    imageUrl: 'https://s7d1.scene7.com/is/image/mcdonalds/h-mcdonalds-Gitterkartoffeln',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Grid_fries.jpg/640px-Grid_fries.jpg',
     atoms: [
       { id: 'gitterkartoffeln_fries', name: '金黄卷卷/网状薯条 (Gitterkartoffeln)', type: 'carb', calories: 406, protein: 4.2, fat: 21.5, carbs: 49.0, salt: 2.00, removable: false, default: true }
     ]
@@ -191,7 +191,7 @@ export const FOOD_DATABASE: MenuItem[] = [
     category: 'snacks_beilagen',
     base_calories: 340,
     description: 'Kartoffel-Waffeln im Netz-Schnitt. Super knusprige Textur und herzhaft gewürzt.',
-    imageUrl: 'https://s7d1.scene7.com/is/image/mcdonalds/h-mcdonalds-Netzkartoffeln',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Waffle_fries.jpg/640px-Waffle_fries.jpg',
     atoms: [
       { id: 'netzkartoffeln_waffles', name: '网格华夫薯饼 (Netzkartoffeln)', type: 'carb', calories: 340, protein: 3.8, fat: 17.5, carbs: 41.0, salt: 1.80, removable: false, default: true }
     ]
