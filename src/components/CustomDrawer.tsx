@@ -1,16 +1,20 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import type { MenuItem, LogEntry, FavoritePreset, LoggedAtom } from '../types';
-import { X, Sparkles, Heart, Plus } from 'lucide-react';
+import type { MenuItem } from '../types';
+import { X, Sparkles, Copy, Plus, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface CustomDrawerProps {
   item: MenuItem | null;
   onClose: () => void;
-  onAddLog: (entry: LogEntry) => void;
-  onAddFavorite: (preset: FavoritePreset) => void;
+  onAddTrayItem: (
+    item: MenuItem,
+    selectedSize: 'S' | 'M' | 'L' | undefined,
+    atomSelection: Record<string, boolean>,
+    nutrition: { calories: number; protein: number; fat: number; carbs: number; salt: number }
+  ) => void;
 }
 
-// 极其优雅的 Odometer 数字滚动与递增递减数字平滑插值组件
+// Odometer component for smooth calorie animation
 function AnimatedNumber({ value }: { value: number }) {
   const [displayValue, setDisplayValue] = useState(value);
   const previousValueRef = useRef(value);
@@ -20,17 +24,14 @@ function AnimatedNumber({ value }: { value: number }) {
     const endValue = value;
     if (startValue === endValue) return;
 
-    const duration = 250; // 动画持续 250ms
+    const duration = 200;
     const startTime = performance.now();
-
     let animationFrameId: number;
 
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
-      // Easing out cubic: 缓动效果让数值变化更圆润
-      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const easeProgress = 1 - Math.pow(1 - progress, 3); // ease-out cubic
       const currentValue = Math.round(startValue + (endValue - startValue) * easeProgress);
 
       setDisplayValue(currentValue);
@@ -44,10 +45,7 @@ function AnimatedNumber({ value }: { value: number }) {
     };
 
     animationFrameId = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
+    return () => cancelAnimationFrame(animationFrameId);
   }, [value]);
 
   return (
@@ -57,40 +55,34 @@ function AnimatedNumber({ value }: { value: number }) {
   );
 }
 
-export function CustomDrawer({ item, onClose, onAddLog, onAddFavorite }: CustomDrawerProps) {
+export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps) {
   if (!item) return null;
 
-  // 记录每个 atom 的选中状态
   const [atomSelection, setAtomSelection] = useState<Record<string, boolean>>({});
-  // 收藏标签输入框开关
-  const [showFavInput, setShowFavInput] = useState(false);
-  const [favLabel, setFavLabel] = useState('');
+  const [copied, setCopied] = useState(false);
 
-  // 饮品规格状态
+  // Beverage/Fries Sizing
   const supportedSizes = item.supportedSizes || [];
   const [selectedSize, setSelectedSize] = useState<'S' | 'M' | 'L'>(
     supportedSizes.includes('M') ? 'M' : (supportedSizes[0] as 'S' | 'M' | 'L') || 'M'
   );
 
-  // 初始化原子选中状态与规格为默认值
+  // Re-initialize selection when drawer changes
   useEffect(() => {
-    if (item) {
-      const initial: Record<string, boolean> = {};
-      item.atoms.forEach((atom) => {
-        initial[atom.id] = atom.default;
-      });
-      setAtomSelection(initial);
-      setShowFavInput(false);
-      setFavLabel('');
-      
-      const sizes = item.supportedSizes || [];
-      setSelectedSize(sizes.includes('M') ? 'M' : (sizes[0] as 'S' | 'M' | 'L') || 'M');
-    }
+    const initial: Record<string, boolean> = {};
+    item.atoms.forEach((atom) => {
+      initial[atom.id] = atom.default;
+    });
+    setAtomSelection(initial);
+    setCopied(false);
+
+    const sizes = item.supportedSizes || [];
+    setSelectedSize(sizes.includes('M') ? 'M' : (sizes[0] as 'S' | 'M' | 'L') || 'M');
   }, [item]);
 
-  // 饮品规格缩放系数
+  // Sizing Multiplier (S = 0.75, M = 1.0, L = 1.4)
   const sizeMultiplier = useMemo(() => {
-    if (item.category !== 'drink') return 1.0;
+    if (!item.supportedSizes || item.supportedSizes.length === 0) return 1.0;
     switch (selectedSize) {
       case 'S': return 0.75;
       case 'L': return 1.40;
@@ -98,9 +90,9 @@ export function CustomDrawer({ item, onClose, onAddLog, onAddFavorite }: CustomD
       default:
         return 1.00;
     }
-  }, [item.category, selectedSize]);
+  }, [item.supportedSizes, selectedSize]);
 
-  // 计算当前的实时营养素总量
+  // Calculate customized nutrition details
   const currentNutrition = useMemo(() => {
     const raw = item.atoms.reduce(
       (acc, atom) => {
@@ -110,124 +102,91 @@ export function CustomDrawer({ item, onClose, onAddLog, onAddFavorite }: CustomD
           acc.protein += atom.protein * sizeMultiplier;
           acc.fat += atom.fat * sizeMultiplier;
           acc.carbs += atom.carbs * sizeMultiplier;
-          acc.sodium += atom.sodium * sizeMultiplier;
+          acc.salt += atom.salt * sizeMultiplier;
         }
         return acc;
       },
-      { calories: 0, protein: 0, fat: 0, carbs: 0, sodium: 0 }
+      { calories: 0, protein: 0, fat: 0, carbs: 0, salt: 0 }
     );
     return {
       calories: Math.round(raw.calories),
       protein: Math.round(raw.protein * 10) / 10,
       fat: Math.round(raw.fat * 10) / 10,
       carbs: Math.round(raw.carbs * 10) / 10,
-      sodium: Math.round(raw.sodium)
+      salt: Math.round(raw.salt * 100) / 100
     };
   }, [item, atomSelection, sizeMultiplier]);
 
-  // 计算相比原厂默认配置，用户节省了多少热量
+  // Original Calories comparison
   const originalCalories = useMemo(() => {
     const base = item.atoms.reduce((sum, a) => sum + (a.default ? a.calories : 0), 0);
     return Math.round(base * sizeMultiplier);
   }, [item, sizeMultiplier]);
-  
+
   const savedCalories = originalCalories - currentNutrition.calories;
 
   const toggleAtom = (atomId: string) => {
     setAtomSelection((prev) => ({
       ...prev,
-      [atomId]: !prev[atomId]
+      ...({ [atomId]: !prev[atomId] })
     }));
   };
 
-  const handleSaveLog = () => {
-    // 组装 LoggedAtom 数组
-    const loggedAtoms: LoggedAtom[] = item.atoms.map((atom) => ({
-      id: atom.id,
-      name: atom.name,
-      calories: Math.round(atom.calories * sizeMultiplier),
-      protein: Math.round(atom.protein * sizeMultiplier * 10) / 10,
-      fat: Math.round(atom.fat * sizeMultiplier * 10) / 10,
-      carbs: Math.round(atom.carbs * sizeMultiplier * 10) / 10,
-      sodium: Math.round(atom.sodium * sizeMultiplier),
-      included: atom.removable ? !!atomSelection[atom.id] : true
-    }));
+  const handleKopieren = () => {
+    // Generate English/German custom label
+    const removedAtoms = item.atoms.filter((a) => a.removable && !atomSelection[a.id]);
+    const customParts = removedAtoms.map((a) => `ohne ${a.name.replace(/\(.*\)/, '').trim()}`).join(', ');
+    const sizeSuffix = item.supportedSizes && item.supportedSizes.length > 1 ? ` (${selectedSize})` : '';
+    const itemDescription = `${item.name}${sizeSuffix}${customParts ? ` ${customParts}` : ''}`;
 
-    const logEntry: LogEntry = {
-      id: Math.random().toString(36).substring(2, 9),
-      timestamp: new Date().toISOString(),
-      itemId: item.id,
-      itemName: item.name,
-      category: item.category,
-      atoms: loggedAtoms,
-      totalCalories: currentNutrition.calories,
-      totalProtein: currentNutrition.protein,
-      totalFat: currentNutrition.fat,
-      totalCarbs: currentNutrition.carbs,
-      totalSodium: currentNutrition.sodium,
-      selectedSize: item.category === 'drink' ? selectedSize : undefined
-    };
+    const formattedText = `🍔 McDonald's Custom: ${currentNutrition.calories} kcal | P: ${currentNutrition.protein.toFixed(1)}g | F: ${currentNutrition.fat.toFixed(1)}g | C: ${currentNutrition.carbs.toFixed(1)}g | Salt: ${currentNutrition.salt.toFixed(2)}g (${itemDescription})`;
 
-    // 如果节省了卡路里，爆破七彩纸屑庆祝自律！
+    navigator.clipboard.writeText(formattedText).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+
+      // Light confetti burst
+      confetti({
+        particleCount: 40,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0.1, y: 0.8 }
+      });
+    });
+  };
+
+  const handleAddToTray = () => {
+    // Check if calories saved
     if (savedCalories > 0) {
       confetti({
         particleCount: 80,
         spread: 60,
         origin: { y: 0.8 },
-        colors: ['#f2c94c', '#27ae60', '#2f80ed']
+        colors: ['#ffc72c', '#da291c', '#27ae60']
+      });
+    } else {
+      confetti({
+        particleCount: 30,
+        spread: 40,
+        origin: { y: 0.85 },
+        colors: ['#ffc72c', '#da291c']
       });
     }
 
-    onAddLog(logEntry);
+    onAddTrayItem(item, item.supportedSizes ? selectedSize : undefined, atomSelection, currentNutrition);
     onClose();
-  };
-
-  const handleSaveFavorite = () => {
-    if (!favLabel.trim()) return;
-
-    const preset: FavoritePreset = {
-      id: Math.random().toString(36).substring(2, 9),
-      label: favLabel.trim(),
-      itemId: item.id,
-      itemName: item.name,
-      category: item.category,
-      atoms: item.atoms.map((atom) => ({
-        id: atom.id,
-        included: atom.removable ? !!atomSelection[atom.id] : true
-      })),
-      totalCalories: currentNutrition.calories,
-      totalProtein: currentNutrition.protein,
-      totalFat: currentNutrition.fat,
-      totalCarbs: currentNutrition.carbs,
-      totalSodium: currentNutrition.sodium,
-      selectedSize: item.category === 'drink' ? selectedSize : undefined
-    };
-
-    onAddFavorite(preset);
-    setShowFavInput(false);
-    setFavLabel('');
-    
-    // 微触觉反馈纸屑
-    confetti({
-      particleCount: 30,
-      angle: 60,
-      spread: 55,
-      origin: { x: 0 }
-    });
   };
 
   return (
     <div className="fixed inset-0 bg-black/40 dark:bg-black/60 z-50 flex items-end justify-center transition-all duration-300">
-      {/* 半透明遮罩点击关闭 */}
       <div className="absolute inset-0" onClick={onClose} />
 
-      {/* 滑出式底层抽屉卡片 */}
       <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-10 max-h-[85vh] overflow-y-auto no-scrollbar shadow-2xl flex flex-col relative border-t border-slate-100 dark:border-slate-800">
         
-        {/* 顶部中央圆柱指示条 */}
+        {/* Drag Indicator */}
         <div className="w-12 h-1 bg-slate-200 dark:bg-slate-800 rounded-full mx-auto my-3 flex-shrink-0" />
 
-        {/* 头部标题区 */}
+        {/* Header */}
         <div className="px-6 flex justify-between items-start">
           <div className="space-y-1">
             <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">{item.name}</h2>
@@ -241,7 +200,7 @@ export function CustomDrawer({ item, onClose, onAddLog, onAddFavorite }: CustomD
           </button>
         </div>
 
-        {/* 实时营养素大数字看板 (极简且高级) */}
+        {/* Calorie Display */}
         <div className="mx-6 mt-5 p-5 bg-slate-50/50 dark:bg-slate-950/30 rounded-3xl border border-slate-100 dark:border-slate-800/80 flex justify-between items-center relative overflow-hidden">
           <div className="space-y-1">
             <div className="flex items-baseline text-slate-900 dark:text-white">
@@ -249,59 +208,58 @@ export function CustomDrawer({ item, onClose, onAddLog, onAddFavorite }: CustomD
               <span className="text-xs text-slate-400 font-semibold ml-1">kcal</span>
             </div>
             <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
-              当前计算热量
+              Berechnete Kalorien (当前热量)
             </span>
           </div>
 
-          {/* 节省卡路里徽章 */}
           {savedCalories > 0 && (
             <div className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 py-1.5 px-3 rounded-2xl text-[10px] font-bold flex items-center gap-1 animate-pop border border-emerald-500/10">
-              <Sparkles className="w-3.5 h-3.5" />
-              已省 {savedCalories} kcal
+              <Sparkles className="w-3.5 h-3.5 animate-spin-slow" />
+              Gespart: -{savedCalories} kcal (已省)
             </div>
           )}
         </div>
 
-        {/* 精细宏量指示条组 */}
+        {/* Nutritional Stats Grid */}
         <div className="grid grid-cols-4 gap-2 mx-6 mt-3 px-1 text-center">
           <div className="bg-blue-500/[0.04] dark:bg-blue-500/[0.02] p-2.5 rounded-2xl border border-blue-500/5">
-            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">蛋白质</span>
+            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">Protein</span>
             <span className="text-sm font-extrabold text-blue-500 tabular-nums">
               {currentNutrition.protein.toFixed(1)}g
             </span>
           </div>
           <div className="bg-amber-400/[0.04] dark:bg-amber-400/[0.02] p-2.5 rounded-2xl border border-amber-400/5">
-            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">脂肪</span>
+            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">Fett (脂肪)</span>
             <span className="text-sm font-extrabold text-amber-500 tabular-nums">
               {currentNutrition.fat.toFixed(1)}g
             </span>
           </div>
           <div className="bg-emerald-500/[0.04] dark:bg-emerald-500/[0.02] p-2.5 rounded-2xl border border-emerald-500/5">
-            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">碳水</span>
+            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">Kohlenhyd.</span>
             <span className="text-sm font-extrabold text-emerald-500 tabular-nums">
               {currentNutrition.carbs.toFixed(1)}g
             </span>
           </div>
           <div className="bg-rose-500/[0.04] dark:bg-rose-500/[0.02] p-2.5 rounded-2xl border border-rose-500/5">
-            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">钠</span>
+            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">Salz (盐)</span>
             <span className="text-sm font-extrabold text-rose-500 tabular-nums">
-              {currentNutrition.sodium}mg
+              {currentNutrition.salt.toFixed(2)}g
             </span>
           </div>
         </div>
 
-        {/* 原子化食材微调区 (核心交互) */}
+        {/* Customization Details */}
         <div className="px-6 py-5 space-y-4 flex-grow">
           
-          {/* 杯型规格选择器 Segmented Control */}
-          {item.category === 'drink' && supportedSizes.length > 1 && (
+          {/* Size Selector */}
+          {item.supportedSizes && item.supportedSizes.length > 1 && (
             <div className="space-y-1.5 animate-pop">
               <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                选择杯型规格
+                Größe wählen (规格选择)
               </h3>
               <div className="bg-slate-100 dark:bg-slate-950/40 p-1 rounded-2xl flex relative border border-slate-200/50 dark:border-slate-800/80">
                 {supportedSizes.map((sz) => {
-                  const sizeNameMap = { S: '小杯 S', M: '中杯 M', L: '大杯 L' };
+                  const sizeLabels = { S: 'S (Klein)', M: 'M (Mittel)', L: 'L (Groß)' };
                   const isSelected = selectedSize === sz;
                   return (
                     <button
@@ -313,7 +271,7 @@ export function CustomDrawer({ item, onClose, onAddLog, onAddFavorite }: CustomD
                           : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-250'
                       }`}
                     >
-                      {sizeNameMap[sz as 'S' | 'M' | 'L']}
+                      {sizeLabels[sz as 'S' | 'M' | 'L']}
                     </button>
                   );
                 })}
@@ -322,7 +280,7 @@ export function CustomDrawer({ item, onClose, onAddLog, onAddFavorite }: CustomD
           )}
 
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-50 dark:border-slate-800/80 pb-2">
-            原子食材调配
+            Zutaten anpassen (定制配料)
           </h3>
 
           <div className="space-y-2 max-h-[30vh] overflow-y-auto no-scrollbar pr-0.5">
@@ -333,7 +291,7 @@ export function CustomDrawer({ item, onClose, onAddLog, onAddFavorite }: CustomD
               const displayCal = Math.round(atom.calories * sizeMultiplier);
               const displayPro = (atom.protein * sizeMultiplier).toFixed(1);
               const displayFat = (atom.fat * sizeMultiplier).toFixed(1);
-              const displaySod = Math.round(atom.sodium * sizeMultiplier);
+              const displaySalt = (atom.salt * sizeMultiplier).toFixed(2);
 
               return (
                 <div
@@ -352,29 +310,33 @@ export function CustomDrawer({ item, onClose, onAddLog, onAddFavorite }: CustomD
                       !isSelected ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-200'
                     }`}>
                       {atom.name}
+                      {isRemovable && isSelected && (
+                        <span className="text-[10px] text-amber-600 dark:text-amber-400 font-normal ml-2">
+                          (ohne möglich)
+                        </span>
+                      )}
                     </span>
                     <span className="text-[10px] text-slate-400 block tabular-nums">
-                      {displayCal} kcal • 蛋 {displayPro}g • 脂 {displayFat}g • 钠 {displaySod}mg
+                      {displayCal} kcal • P: {displayPro}g • F: {displayFat}g • Salz: {displaySalt}g
                     </span>
                   </div>
 
                   <div>
                     {isRemovable ? (
-                      /* 原生高拟真 iOS 风 Toggle Switch */
                       <div
                         className={`w-11 h-6 rounded-full p-0.5 transition-all relative ${
-                          isSelected ? 'bg-amber-500' : 'bg-slate-200 dark:bg-slate-800'
+                          isSelected ? 'bg-amber-500' : 'bg-slate-200 dark:bg-slate-850'
                         }`}
                       >
                         <div
-                          className={`w-5 h-5 rounded-full bg-white shadow-sm switch-dot transform ${
+                          className={`w-5 h-5 rounded-full bg-white shadow-sm switch-dot transform transition-transform duration-200 ${
                             isSelected ? 'translate-x-5' : 'translate-x-0'
                           }`}
                         />
                       </div>
                     ) : (
-                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                        必选主料
+                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                        Basis
                       </span>
                     )}
                   </div>
@@ -384,53 +346,40 @@ export function CustomDrawer({ item, onClose, onAddLog, onAddFavorite }: CustomD
           </div>
         </div>
 
-        {/* 底部操作工具栏 */}
-        <div className="border-t border-slate-100 dark:border-slate-800 p-6 space-y-4 bg-slate-50/50 dark:bg-slate-950/20 flex-shrink-0">
-          
-          {/* 保存为标配输入入口 */}
-          {showFavInput ? (
-            <div className="flex items-center gap-2 animate-pop">
-              <input
-                type="text"
-                value={favLabel}
-                onChange={(e) => setFavLabel(e.target.value)}
-                placeholder="给本配方起个名字 (如: 我的板烧标配)"
-                className="flex-grow py-3 px-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-amber-500"
-              />
-              <button
-                onClick={handleSaveFavorite}
-                disabled={!favLabel.trim()}
-                className="py-3 px-4 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white rounded-2xl text-sm font-bold shadow-md shadow-amber-500/10 transition-all flex-shrink-0"
-              >
-                保存
-              </button>
-              <button
-                onClick={() => setShowFavInput(false)}
-                className="p-3 bg-slate-100 dark:bg-slate-800 hover:opacity-80 rounded-2xl text-slate-400 transition-all"
-              >
-                取消
-              </button>
-            </div>
-          ) : (
-            <div className="flex justify-between items-center px-1">
-              <button
-                onClick={() => setShowFavInput(true)}
-                className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:opacity-80 flex items-center gap-1.5 transition-all"
-              >
-                <Heart className="w-4 h-4" />
-                另存为“我的标配”
-              </button>
-            </div>
-          )}
+        {/* Bottom Actions */}
+        <div className="border-t border-slate-100 dark:border-slate-800 p-6 space-y-3 bg-slate-50/50 dark:bg-slate-950/20 flex-shrink-0">
+          <div className="flex gap-2">
+            {/* Kopieren Button */}
+            <button
+              onClick={handleKopieren}
+              className={`py-4 px-5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all text-sm flex-1 ${
+                copied
+                  ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25'
+                  : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-750 shadow-sm'
+              }`}
+            >
+              {copied ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  Kopiert!
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  Kopieren
+                </>
+              )}
+            </button>
 
-          {/* 记入今天按钮 */}
-          <button
-            onClick={handleSaveLog}
-            className="w-full py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-bold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center justify-center gap-2 transition-all text-base"
-          >
-            <Plus className="w-5 h-5 stroke-[2.5]" />
-            记入今天
-          </button>
+            {/* Warenkorb Button */}
+            <button
+              onClick={handleAddToTray}
+              className="py-4 px-6 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-extrabold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center justify-center gap-2 transition-all text-sm flex-[2]"
+            >
+              <Plus className="w-4 h-4 stroke-[3]" />
+              In den Warenkorb
+            </button>
+          </div>
         </div>
 
       </div>
