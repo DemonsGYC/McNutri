@@ -68,17 +68,11 @@ export function MenuPanel({ onSelectItem, foodDatabase = FOOD_DATABASE }: MenuPa
 
       {/* Product List */}
       {filteredMenu.length > 0 ? (
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           {filteredMenu.map((item) => {
             const defaultCalories = item.base_calories;
             const proteinAtom = item.atoms.reduce((sum, a) => sum + (a.default ? a.protein : 0), 0);
 
-            // Minimum calories if all customizable items are removed
-            const minCalories = item.atoms.reduce(
-              (sum, atom) => sum + (atom.removable ? 0 : atom.calories),
-              0
-            );
-            
             const canBeCustomized = item.atoms.some((a) => a.removable);
 
             // Dynamic customization hint in Chinese
@@ -89,15 +83,15 @@ export function MenuPanel({ onSelectItem, foodDatabase = FOOD_DATABASE }: MenuPa
               const hasSalt = item.atoms.some((a) => a.removable && a.id.includes('salz'));
 
               if (item.category === 'snacks_beilagen' && hasSalt) {
-                customLabel = '可定制去盐';
+                customLabel = '可去盐';
               } else if (hasSauce && hasCheese) {
-                customLabel = '可定制去酱/去芝士';
+                customLabel = '去酱/芝士';
               } else if (hasSauce) {
-                customLabel = '可定制去酱';
+                customLabel = '可去酱';
               } else if (hasCheese) {
-                customLabel = '可定制去芝士';
+                customLabel = '可去芝士';
               } else {
-                customLabel = '可微调配料';
+                customLabel = '可定制';
               }
             }
 
@@ -105,45 +99,51 @@ export function MenuPanel({ onSelectItem, foodDatabase = FOOD_DATABASE }: MenuPa
               <div
                 key={item.id}
                 onClick={() => onSelectItem(item)}
-                className="glass rounded-3xl p-4 shadow-sm border border-slate-100 dark:border-slate-850 flex justify-between items-center cursor-pointer transition-all duration-300 hover:scale-[1.01] hover:shadow-md hover:border-amber-500/20 active:scale-[0.99] relative overflow-hidden"
+                className="bg-white dark:bg-slate-900 rounded-3xl p-3.5 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-800/80 flex flex-col justify-between cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:border-amber-500/20 active:scale-[0.98] relative overflow-hidden"
               >
-                <div className="space-y-1.5 flex-grow pr-4">
-                  <div className="flex items-center flex-wrap gap-1.5">
-                    <span className="text-sm font-extrabold text-slate-900 dark:text-white leading-snug">{item.name}</span>
-                    {item.supportedSizes && item.supportedSizes.length > 1 && (
-                      <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 uppercase tracking-widest leading-none">
-                        {item.category === 'getraenke' ? '多杯型' : '多规格'}
-                      </span>
-                    )}
-                    {canBeCustomized && (
-                      <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 uppercase tracking-wider leading-none">
-                        {customLabel}
-                      </span>
-                    )}
-                  </div>
-                  
-                  <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-normal max-w-[90%]">
-                    {item.description}
-                  </p>
-
-                  <div className="flex gap-2 items-center text-[10px] font-bold text-slate-400">
-                    <span className="text-blue-500 font-extrabold">蛋白质: {proteinAtom.toFixed(1)}g</span>
-                    <span>•</span>
-                    {canBeCustomized ? (
-                      <span className="text-emerald-500">魔改最低 {minCalories} kcal</span>
-                    ) : (
-                      <span className="text-slate-350">标准配方</span>
-                    )}
-                  </div>
+                {/* Product Image Container */}
+                <div className="w-full h-28 flex items-center justify-center bg-slate-50/50 dark:bg-slate-950/30 rounded-2xl p-1.5 relative overflow-hidden">
+                  {item.imageUrl ? (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.name}
+                      className="w-full h-full object-contain filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.06)] hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-slate-100 dark:bg-slate-850 flex items-center justify-center text-slate-350 text-[10px] font-bold">
+                      Kein Bild
+                    </div>
+                  )}
                 </div>
 
-                {/* Right Badge Calorie Indicator */}
-                <div className="flex-shrink-0 text-center bg-slate-50/80 dark:bg-slate-950/40 p-3 rounded-2xl border border-slate-100 dark:border-slate-800/80 min-w-[70px]">
-                  <span className="text-base font-extrabold text-slate-800 dark:text-slate-200 block leading-tight">
-                    {defaultCalories}
-                  </span>
-                  <span className="text-[9px] text-slate-400 block font-bold uppercase tracking-wider mt-0.5">
-                    kcal
+                {/* Badges strip */}
+                <div className="flex flex-wrap gap-1 mt-2.5 min-h-[16px]">
+                  {canBeCustomized && (
+                    <span className="text-[8px] font-extrabold px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                      {customLabel}
+                    </span>
+                  )}
+                  {item.supportedSizes && item.supportedSizes.length > 1 && (
+                    <span className="text-[8px] font-extrabold px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                      {item.category === 'getraenke' ? '多杯型' : '多规格'}
+                    </span>
+                  )}
+                </div>
+
+                {/* Item Name */}
+                <h4 className="text-xs font-extrabold text-slate-900 dark:text-white mt-1 leading-snug line-clamp-2 min-h-[2.2rem] flex items-start">
+                  {item.name}
+                </h4>
+
+                {/* Card Footer: Calories & Protein */}
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-50 dark:border-slate-800/80">
+                  <div className="flex flex-col">
+                    <span className="text-[11px] font-black text-slate-800 dark:text-slate-200 tabular-nums">
+                      {defaultCalories} <span className="text-[8px] text-slate-400 font-bold uppercase">kcal</span>
+                    </span>
+                  </div>
+                  <span className="text-[8.5px] font-extrabold px-1.5 py-0.5 rounded bg-blue-500/[0.06] text-blue-500 dark:text-blue-400">
+                    P: {proteinAtom.toFixed(1)}g
                   </span>
                 </div>
               </div>

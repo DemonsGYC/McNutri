@@ -18,7 +18,7 @@ export interface MenuItem {
   base_calories: number;
   atoms: AtomComponent[];
   description?: string;
-  image?: string;
+  imageUrl?: string;
   supportedSizes?: string[]; // e.g., ['S', 'M', 'L'] or ['6er', '9er', '20er']
 }
 

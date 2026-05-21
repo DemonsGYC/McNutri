@@ -197,6 +197,19 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
         {/* Drag Indicator */}
         <div className="w-12 h-1 bg-slate-200 dark:bg-slate-800 rounded-full mx-auto my-3 flex-shrink-0" />
 
+        {/* Product Image Showcase */}
+        {item.imageUrl && (
+          <div className="w-full px-6 pt-2 pb-4 flex items-center justify-center relative overflow-hidden bg-gradient-to-b from-slate-50/50 to-transparent dark:from-slate-950/20 dark:to-transparent">
+            <div className="w-48 h-48 md:w-52 md:h-52 flex items-center justify-center relative">
+              <img
+                src={item.imageUrl}
+                alt={item.name}
+                className="w-full h-full object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="px-6 flex justify-between items-start">
           <div className="space-y-1">
