@@ -24,9 +24,42 @@ const SIZE_LABELS: Record<string, string> = {
   '20er': '20块分享装'
 };
 
+const TRAY_STORAGE_KEY = 'mcd_tray_v1';
+
+interface StoredTray {
+  updatedAt: number;
+  items: TrayItem[];
+}
+
 export function App() {
   const [foodDatabase, setFoodDatabase] = useState<MenuItem[]>(getCachedDatabase);
-  const [trayItems, setTrayItems] = useState<TrayItem[]>([]);
+  const [trayItems, setTrayItems] = useState<TrayItem[]>(() => {
+    try {
+      const stored = window.localStorage.getItem(TRAY_STORAGE_KEY);
+      if (stored) {
+        const parsed: StoredTray = JSON.parse(stored);
+        const now = Date.now();
+        const fourHours = 4 * 60 * 60 * 1000;
+        
+        // 1. Check if older than 4 hours
+        if (now - parsed.updatedAt > fourHours) {
+          return [];
+        }
+        
+        // 2. Check if calendar day has changed
+        const lastDate = new Date(parsed.updatedAt).toDateString();
+        const nowDate = new Date(now).toDateString();
+        if (lastDate !== nowDate) {
+          return [];
+        }
+        
+        return parsed.items;
+      }
+    } catch (e) {
+      console.error('Failed to parse stored tray items', e);
+    }
+    return [];
+  });
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [copied, setCopied] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -37,6 +70,23 @@ export function App() {
       setFoodDatabase(db);
     });
   }, []);
+
+  // Sync tray items to localStorage
+  useEffect(() => {
+    try {
+      if (trayItems.length > 0) {
+        const stored: StoredTray = {
+          updatedAt: Date.now(),
+          items: trayItems
+        };
+        window.localStorage.setItem(TRAY_STORAGE_KEY, JSON.stringify(stored));
+      } else {
+        window.localStorage.removeItem(TRAY_STORAGE_KEY);
+      }
+    } catch (e) {
+      console.error('Failed to save tray items to localStorage', e);
+    }
+  }, [trayItems]);
 
   // Add customized item from Drawer to calculate tray
   const handleAddTrayItem = (
@@ -100,11 +150,12 @@ export function App() {
       })
       .join(' + ');
 
+    const sodiumMg = Math.round(grandTotals.salt * 400);
     const formattedText = `🍔 麦当劳定制餐：${grandTotals.calories} kcal | 蛋白质: ${grandTotals.protein.toFixed(
       1
     )}g | 脂肪: ${grandTotals.fat.toFixed(1)}g | 碳水: ${grandTotals.carbs.toFixed(
       1
-    )}g | 盐: ${grandTotals.salt.toFixed(2)}g (${itemDescriptions})`;
+    )}g | 钠: ${sodiumMg}mg (等效盐: ${grandTotals.salt.toFixed(2)}g) (${itemDescriptions})`;
 
     navigator.clipboard.writeText(formattedText).then(() => {
       setCopied(true);
