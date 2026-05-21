@@ -364,6 +364,14 @@ export const FOOD_DATABASE: MenuItem[] = [
 ];
 
 export const REMOTE_DB_URL = "https://your-api.com/mcd_de_db.json";
+export const CACHE_KEY = "mcd_de_food_db_v2";
+
+// Clean up old cache keys to prevent memory clutter and force invalidation of broken databases
+try {
+  localStorage.removeItem('mcd_de_food_db');
+} catch (e) {
+  // Silent catch for non-browser environments or security blocks
+}
 
 /**
  * Attempts to asynchronously fetch the latest German McDonald's database from the remote URL.
@@ -388,7 +396,7 @@ export async function initializeDatabase(): Promise<MenuItem[]> {
     // Structurally validate that we received a non-empty array of MenuItems
     if (Array.isArray(latestData) && latestData.length > 0 && latestData[0].id) {
       try {
-        localStorage.setItem('mcd_de_food_db', JSON.stringify(latestData));
+        localStorage.setItem(CACHE_KEY, JSON.stringify(latestData));
       } catch (storageError) {
         console.warn('Failed to write fetched database to localStorage cache:', storageError);
       }
@@ -407,7 +415,7 @@ export async function initializeDatabase(): Promise<MenuItem[]> {
  */
 export function getCachedDatabase(): MenuItem[] {
   try {
-    const cached = localStorage.getItem('mcd_de_food_db');
+    const cached = localStorage.getItem(CACHE_KEY);
     if (cached) {
       const parsed = JSON.parse(cached);
       if (Array.isArray(parsed) && parsed.length > 0) {
