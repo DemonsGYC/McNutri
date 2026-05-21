@@ -192,192 +192,199 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
     <div className="fixed inset-0 bg-black/40 dark:bg-black/60 z-50 flex items-end justify-center transition-all duration-300">
       <div className="absolute inset-0" onClick={onClose} />
 
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-10 max-h-[85vh] overflow-y-auto no-scrollbar shadow-2xl flex flex-col relative border-t border-slate-100 dark:border-slate-800">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-10 max-h-[85vh] overflow-hidden shadow-2xl flex flex-col relative border-t border-slate-100 dark:border-slate-800">
         
+        {/* Floating Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-5 right-5 z-20 p-2 rounded-full bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all shadow-sm"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
         {/* Drag Indicator */}
         <div className="w-12 h-1 bg-slate-200 dark:bg-slate-800 rounded-full mx-auto my-3 flex-shrink-0" />
 
-        {/* Product Image Showcase */}
-        {item.imageUrl && (
-          <div className="w-full px-6 pt-2 pb-4 flex items-center justify-center relative overflow-hidden bg-gradient-to-b from-slate-50/50 to-transparent dark:from-slate-950/20 dark:to-transparent">
-            <div className="w-48 h-48 md:w-52 md:h-52 flex items-center justify-center relative">
-              <img
-                src={item.imageUrl}
-                alt={item.name}
-                className="w-full h-full object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:scale-105 transition-transform duration-500"
-              />
-            </div>
-          </div>
-        )}
+        {/* Scrollable Content Wrapper */}
+        <div className="flex-grow overflow-y-auto no-scrollbar pb-6 space-y-5">
 
-        {/* Header */}
-        <div className="px-6 flex justify-between items-start">
-          <div className="space-y-1">
-            <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">{item.name}</h2>
-            <p className="text-xs text-slate-400 dark:text-slate-500 leading-normal max-w-[85%]">{item.description}</p>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:opacity-80 transition-all"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Calorie Display */}
-        <div className="mx-6 mt-5 p-5 bg-slate-50/50 dark:bg-slate-950/30 rounded-3xl border border-slate-100 dark:border-slate-800/80 flex justify-between items-center relative overflow-hidden">
-          <div className="space-y-1">
-            <div className="flex items-baseline text-slate-900 dark:text-white">
-              <AnimatedNumber value={currentNutrition.calories} />
-              <span className="text-xs text-slate-400 font-semibold ml-1">kcal</span>
-            </div>
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
-              计算所得热量
-            </span>
-          </div>
-
-          {savedCalories > 0 && (
-            <div className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 py-1.5 px-3 rounded-2xl text-[10px] font-bold flex items-center gap-1 animate-pop border border-emerald-500/10">
-              <Sparkles className="w-3.5 h-3.5 animate-spin-slow" />
-              去料已省: -{savedCalories} kcal
-            </div>
-          )}
-        </div>
-
-        {/* Nutritional Stats Grid */}
-        <div className="grid grid-cols-4 gap-2 mx-6 mt-3 px-1 text-center">
-          <div className="bg-blue-500/[0.04] dark:bg-blue-500/[0.02] p-2.5 rounded-2xl border border-blue-500/5">
-            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">蛋白质</span>
-            <span className="text-sm font-extrabold text-blue-500 tabular-nums">
-              {currentNutrition.protein.toFixed(1)}g
-            </span>
-          </div>
-          <div className="bg-amber-400/[0.04] dark:bg-amber-400/[0.02] p-2.5 rounded-2xl border border-amber-400/5">
-            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">脂肪</span>
-            <span className="text-sm font-extrabold text-amber-500 tabular-nums">
-              {currentNutrition.fat.toFixed(1)}g
-            </span>
-          </div>
-          <div className="bg-emerald-500/[0.04] dark:bg-emerald-500/[0.02] p-2.5 rounded-2xl border border-emerald-500/5">
-            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">碳水</span>
-            <span className="text-sm font-extrabold text-emerald-500 tabular-nums">
-              {currentNutrition.carbs.toFixed(1)}g
-            </span>
-          </div>
-          <div className="bg-rose-500/[0.04] dark:bg-rose-500/[0.02] p-2.5 rounded-2xl border border-rose-500/5">
-            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">盐</span>
-            <span className="text-sm font-extrabold text-rose-500 tabular-nums">
-              {currentNutrition.salt.toFixed(2)}g
-            </span>
-          </div>
-        </div>
-
-        {/* Customization Details */}
-        <div className="px-6 py-5 space-y-4 flex-grow">
-          
-          {/* Size Selector */}
-          {item.supportedSizes && item.supportedSizes.length > 1 && (
-            <div className="space-y-1.5 animate-pop">
-              <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                选择规格分量
-              </h3>
-              <div className="bg-slate-100 dark:bg-slate-950/40 p-1 rounded-2xl flex relative border border-slate-200/50 dark:border-slate-800/80">
-                {supportedSizes.map((sz) => {
-                  const sizeLabels: Record<string, string> = {
-                    S: 'S (小份)',
-                    M: 'M (中份)',
-                    L: 'L (大份)',
-                    '6er': '6块装',
-                    '9er': '9块装',
-                    '20er': '20块分享装'
-                  };
-                  const isSelected = selectedSize === sz;
-                  return (
-                    <button
-                      key={sz}
-                      onClick={() => setSelectedSize(sz)}
-                      className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all duration-205 relative z-10 ${
-                        isSelected
-                          ? 'bg-white dark:bg-slate-850 text-amber-500 shadow-sm border border-slate-100/50 dark:border-slate-800/60'
-                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-250'
-                      }`}
-                    >
-                      {sizeLabels[sz] || sz}
-                    </button>
-                  );
-                })}
+          {/* Product Image Showcase */}
+          {item.imageUrl && (
+            <div className="w-full px-6 pt-2 pb-4 flex items-center justify-center relative overflow-hidden bg-gradient-to-b from-slate-50/50 to-transparent dark:from-slate-950/20 dark:to-transparent">
+              <div className="w-48 h-48 md:w-52 md:h-52 flex items-center justify-center relative">
+                <img
+                  src={item.imageUrl}
+                  alt={item.name}
+                  className="w-full h-full object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:scale-105 transition-transform duration-500"
+                />
               </div>
             </div>
           )}
 
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-50 dark:border-slate-800/80 pb-2">
-            配料微调 (去勾选即可去料)
-          </h3>
+          {/* Header */}
+          <div className="px-6">
+            <div className="space-y-1 pr-8">
+              <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">{item.name}</h2>
+              <p className="text-xs text-slate-400 dark:text-slate-500 leading-normal">{item.description}</p>
+            </div>
+          </div>
 
-          <div className="space-y-2 max-h-[30vh] overflow-y-auto no-scrollbar pr-0.5">
-            {item.atoms.map((atom) => {
-              const isRemovable = atom.removable;
-              const isSelected = isRemovable ? !!atomSelection[atom.id] : true;
-              
-              const displayCal = Math.round(atom.calories * sizeMultiplier);
-              const displayPro = (atom.protein * sizeMultiplier).toFixed(1);
-              const displayFat = (atom.fat * sizeMultiplier).toFixed(1);
-              const displaySalt = (atom.salt * sizeMultiplier).toFixed(2);
+          {/* Calorie Display */}
+          <div className="mx-6 p-5 bg-slate-50/50 dark:bg-slate-950/30 rounded-3xl border border-slate-100 dark:border-slate-800/80 flex justify-between items-center relative overflow-hidden">
+            <div className="space-y-1">
+              <div className="flex items-baseline text-slate-900 dark:text-white">
+                <AnimatedNumber value={currentNutrition.calories} />
+                <span className="text-xs text-slate-400 font-semibold ml-1">kcal</span>
+              </div>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+                计算所得热量
+              </span>
+            </div>
 
-              return (
-                <div
-                  key={atom.id}
-                  onClick={() => isRemovable && toggleAtom(atom.id)}
-                  className={`p-3.5 rounded-2xl flex justify-between items-center transition-all ${
-                    !isRemovable
-                      ? 'bg-slate-50/60 dark:bg-slate-900/40 border border-transparent opacity-80 cursor-not-allowed'
-                      : isSelected
-                      ? 'bg-amber-500/[0.03] dark:bg-amber-500/[0.01] border border-amber-500/10 cursor-pointer'
-                      : 'bg-slate-100/40 dark:bg-slate-900/20 border border-slate-100 dark:border-slate-800/50 opacity-60 cursor-pointer'
-                  }`}
-                >
-                  <div className="space-y-0.5">
-                    <span className={`text-sm font-bold block ${
-                      !isSelected ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-200'
-                    }`}>
-                      {!isSelected && isRemovable && (
-                        <span className="text-rose-500 mr-1.5 font-extrabold">[去]</span>
-                      )}
-                      {atom.name}
-                      {isRemovable && isSelected && (
-                        <span className="text-[10px] text-amber-600 dark:text-amber-400 font-normal ml-2">
-                          (可选去)
-                        </span>
-                      )}
-                    </span>
-                    <span className="text-[10px] text-slate-400 block tabular-nums">
-                      {displayCal} kcal • 蛋白质: {displayPro}g • 脂肪: {displayFat}g • 盐: {displaySalt}g
-                    </span>
-                  </div>
+            {savedCalories > 0 && (
+              <div className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 py-1.5 px-3 rounded-2xl text-[10px] font-bold flex items-center gap-1 animate-pop border border-emerald-500/10">
+                <Sparkles className="w-3.5 h-3.5 animate-spin-slow" />
+                去料已省: -{savedCalories} kcal
+              </div>
+            )}
+          </div>
 
-                  <div>
-                    {isRemovable ? (
-                      <div
-                        className={`w-11 h-6 rounded-full p-0.5 transition-all relative ${
-                          isSelected ? 'bg-amber-500' : 'bg-slate-200 dark:bg-slate-850'
+          {/* Nutritional Stats Grid */}
+          <div className="grid grid-cols-4 gap-2 mx-6 px-1 text-center">
+            <div className="bg-blue-500/[0.04] dark:bg-blue-500/[0.02] p-2.5 rounded-2xl border border-blue-500/5">
+              <span className="text-[10px] text-slate-400 font-bold block mb-0.5">蛋白质</span>
+              <span className="text-sm font-extrabold text-blue-500 tabular-nums">
+                {currentNutrition.protein.toFixed(1)}g
+              </span>
+            </div>
+            <div className="bg-amber-400/[0.04] dark:bg-amber-400/[0.02] p-2.5 rounded-2xl border border-amber-400/5">
+              <span className="text-[10px] text-slate-400 font-bold block mb-0.5">脂肪</span>
+              <span className="text-sm font-extrabold text-amber-500 tabular-nums">
+                {currentNutrition.fat.toFixed(1)}g
+              </span>
+            </div>
+            <div className="bg-emerald-500/[0.04] dark:bg-emerald-500/[0.02] p-2.5 rounded-2xl border border-emerald-500/5">
+              <span className="text-[10px] text-slate-400 font-bold block mb-0.5">碳水</span>
+              <span className="text-sm font-extrabold text-emerald-500 tabular-nums">
+                {currentNutrition.carbs.toFixed(1)}g
+              </span>
+            </div>
+            <div className="bg-rose-500/[0.04] dark:bg-rose-500/[0.02] p-2.5 rounded-2xl border border-rose-500/5">
+              <span className="text-[10px] text-slate-400 font-bold block mb-0.5">盐</span>
+              <span className="text-sm font-extrabold text-rose-500 tabular-nums">
+                {currentNutrition.salt.toFixed(2)}g
+              </span>
+            </div>
+          </div>
+
+          {/* Customization Details */}
+          <div className="px-6 space-y-4">
+            
+            {/* Size Selector */}
+            {item.supportedSizes && item.supportedSizes.length > 1 && (
+              <div className="space-y-1.5 animate-pop">
+                <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  选择规格分量
+                </h3>
+                <div className="bg-slate-100 dark:bg-slate-950/40 p-1 rounded-2xl flex relative border border-slate-200/50 dark:border-slate-800/80">
+                  {supportedSizes.map((sz) => {
+                    const sizeLabels: Record<string, string> = {
+                      S: 'S (小份)',
+                      M: 'M (中份)',
+                      L: 'L (大份)',
+                      '6er': '6块装',
+                      '9er': '9块装',
+                      '20er': '20块分享装'
+                    };
+                    const isSelected = selectedSize === sz;
+                    return (
+                      <button
+                        key={sz}
+                        onClick={() => setSelectedSize(sz)}
+                        className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all duration-205 relative z-10 ${
+                          isSelected
+                            ? 'bg-white dark:bg-slate-850 text-amber-500 shadow-sm border border-slate-100/50 dark:border-slate-800/60'
+                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-250'
                         }`}
                       >
-                        <div
-                          className={`w-5 h-5 rounded-full bg-white shadow-sm switch-dot transform transition-transform duration-200 ${
-                            isSelected ? 'translate-x-5' : 'translate-x-0'
-                          }`}
-                        />
-                      </div>
-                    ) : (
-                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                        基础配方
-                      </span>
-                    )}
-                  </div>
+                        {sizeLabels[sz] || sz}
+                      </button>
+                    );
+                  })}
                 </div>
-              );
-            })}
+              </div>
+            )}
+
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-50 dark:border-slate-800/80 pb-2">
+              配料微调 (去勾选即可去料)
+            </h3>
+
+            <div className="space-y-2 pr-0.5">
+              {item.atoms.map((atom) => {
+                const isRemovable = atom.removable;
+                const isSelected = isRemovable ? !!atomSelection[atom.id] : true;
+                
+                const displayCal = Math.round(atom.calories * sizeMultiplier);
+                const displayPro = (atom.protein * sizeMultiplier).toFixed(1);
+                const displayFat = (atom.fat * sizeMultiplier).toFixed(1);
+                const displaySalt = (atom.salt * sizeMultiplier).toFixed(2);
+
+                return (
+                  <div
+                    key={atom.id}
+                    onClick={() => isRemovable && toggleAtom(atom.id)}
+                    className={`p-3.5 rounded-2xl flex justify-between items-center transition-all ${
+                      !isRemovable
+                        ? 'bg-slate-50/60 dark:bg-slate-900/40 border border-transparent opacity-80 cursor-not-allowed'
+                        : isSelected
+                        ? 'bg-amber-500/[0.03] dark:bg-amber-500/[0.01] border border-amber-500/10 cursor-pointer'
+                        : 'bg-slate-100/40 dark:bg-slate-900/20 border border-slate-100 dark:border-slate-800/50 opacity-60 cursor-pointer'
+                    }`}
+                  >
+                    <div className="space-y-0.5">
+                      <span className={`text-sm font-bold block ${
+                        !isSelected ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-200'
+                      }`}>
+                        {!isSelected && isRemovable && (
+                          <span className="text-rose-500 mr-1.5 font-extrabold">[去]</span>
+                        )}
+                        {atom.name}
+                        {isRemovable && isSelected && (
+                          <span className="text-[10px] text-amber-600 dark:text-amber-400 font-normal ml-2">
+                            (可选去)
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-[10px] text-slate-400 block tabular-nums">
+                        {displayCal} kcal • 蛋白质: {displayPro}g • 脂肪: {displayFat}g • 盐: {displaySalt}g
+                      </span>
+                    </div>
+
+                    <div>
+                      {isRemovable ? (
+                        <div
+                          className={`w-11 h-6 rounded-full p-0.5 transition-all relative ${
+                            isSelected ? 'bg-amber-500' : 'bg-slate-200 dark:bg-slate-850'
+                          }`}
+                        >
+                          <div
+                            className={`w-5 h-5 rounded-full bg-white shadow-sm switch-dot transform transition-transform duration-200 ${
+                              isSelected ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                          />
+                        </div>
+                      ) : (
+                        <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                          基础配方
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
+
         </div>
 
         {/* Bottom Actions */}
