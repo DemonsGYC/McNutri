@@ -133,13 +133,14 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
   };
 
   const handleKopieren = () => {
-    // Generate English/German custom label
     const removedAtoms = item.atoms.filter((a) => a.removable && !atomSelection[a.id]);
-    const customParts = removedAtoms.map((a) => `ohne ${a.name.replace(/\(.*\)/, '').trim()}`).join(', ');
-    const sizeSuffix = item.supportedSizes && item.supportedSizes.length > 1 ? ` (${selectedSize})` : '';
+    const customParts = removedAtoms.map((a) => `[去${a.name.split(' (')[0]}]`).join(', ');
+    const sizeSuffix = item.supportedSizes && item.supportedSizes.length > 1 
+      ? ` (${selectedSize === 'S' ? '小份' : selectedSize === 'M' ? '中份' : '大份'})` 
+      : '';
     const itemDescription = `${item.name}${sizeSuffix}${customParts ? ` ${customParts}` : ''}`;
 
-    const formattedText = `🍔 McDonald's Custom: ${currentNutrition.calories} kcal | P: ${currentNutrition.protein.toFixed(1)}g | F: ${currentNutrition.fat.toFixed(1)}g | C: ${currentNutrition.carbs.toFixed(1)}g | Salt: ${currentNutrition.salt.toFixed(2)}g (${itemDescription})`;
+    const formattedText = `🍔 麦当劳定制餐：${currentNutrition.calories} kcal | 蛋白质: ${currentNutrition.protein.toFixed(1)}g | 脂肪: ${currentNutrition.fat.toFixed(1)}g | 碳水: ${currentNutrition.carbs.toFixed(1)}g | 盐: ${currentNutrition.salt.toFixed(2)}g (${itemDescription})`;
 
     navigator.clipboard.writeText(formattedText).then(() => {
       setCopied(true);
@@ -147,7 +148,7 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
 
       // Light confetti burst
       confetti({
-        particleCount: 40,
+        particleCount: 45,
         angle: 60,
         spread: 55,
         origin: { x: 0.1, y: 0.8 }
@@ -156,7 +157,6 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
   };
 
   const handleAddToTray = () => {
-    // Check if calories saved
     if (savedCalories > 0) {
       confetti({
         particleCount: 80,
@@ -208,14 +208,14 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
               <span className="text-xs text-slate-400 font-semibold ml-1">kcal</span>
             </div>
             <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
-              Berechnete Kalorien (当前热量)
+              计算所得热量
             </span>
           </div>
 
           {savedCalories > 0 && (
             <div className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 py-1.5 px-3 rounded-2xl text-[10px] font-bold flex items-center gap-1 animate-pop border border-emerald-500/10">
               <Sparkles className="w-3.5 h-3.5 animate-spin-slow" />
-              Gespart: -{savedCalories} kcal (已省)
+              去料已省: -{savedCalories} kcal
             </div>
           )}
         </div>
@@ -223,25 +223,25 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
         {/* Nutritional Stats Grid */}
         <div className="grid grid-cols-4 gap-2 mx-6 mt-3 px-1 text-center">
           <div className="bg-blue-500/[0.04] dark:bg-blue-500/[0.02] p-2.5 rounded-2xl border border-blue-500/5">
-            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">Protein</span>
+            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">蛋白质</span>
             <span className="text-sm font-extrabold text-blue-500 tabular-nums">
               {currentNutrition.protein.toFixed(1)}g
             </span>
           </div>
           <div className="bg-amber-400/[0.04] dark:bg-amber-400/[0.02] p-2.5 rounded-2xl border border-amber-400/5">
-            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">Fett (脂肪)</span>
+            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">脂肪</span>
             <span className="text-sm font-extrabold text-amber-500 tabular-nums">
               {currentNutrition.fat.toFixed(1)}g
             </span>
           </div>
           <div className="bg-emerald-500/[0.04] dark:bg-emerald-500/[0.02] p-2.5 rounded-2xl border border-emerald-500/5">
-            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">Kohlenhyd.</span>
+            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">碳水</span>
             <span className="text-sm font-extrabold text-emerald-500 tabular-nums">
               {currentNutrition.carbs.toFixed(1)}g
             </span>
           </div>
           <div className="bg-rose-500/[0.04] dark:bg-rose-500/[0.02] p-2.5 rounded-2xl border border-rose-500/5">
-            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">Salz (盐)</span>
+            <span className="text-[10px] text-slate-400 font-bold block mb-0.5">盐</span>
             <span className="text-sm font-extrabold text-rose-500 tabular-nums">
               {currentNutrition.salt.toFixed(2)}g
             </span>
@@ -255,11 +255,11 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
           {item.supportedSizes && item.supportedSizes.length > 1 && (
             <div className="space-y-1.5 animate-pop">
               <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                Größe wählen (规格选择)
+                选择规格分量
               </h3>
               <div className="bg-slate-100 dark:bg-slate-950/40 p-1 rounded-2xl flex relative border border-slate-200/50 dark:border-slate-800/80">
                 {supportedSizes.map((sz) => {
-                  const sizeLabels = { S: 'S (Klein)', M: 'M (Mittel)', L: 'L (Groß)' };
+                  const sizeLabels = { S: 'S (小份)', M: 'M (中份)', L: 'L (大份)' };
                   const isSelected = selectedSize === sz;
                   return (
                     <button
@@ -280,7 +280,7 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
           )}
 
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-50 dark:border-slate-800/80 pb-2">
-            Zutaten anpassen (定制配料)
+            配料微调 (去勾选即可去料)
           </h3>
 
           <div className="space-y-2 max-h-[30vh] overflow-y-auto no-scrollbar pr-0.5">
@@ -309,15 +309,18 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
                     <span className={`text-sm font-bold block ${
                       !isSelected ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-200'
                     }`}>
+                      {!isSelected && isRemovable && (
+                        <span className="text-rose-500 mr-1.5 font-extrabold">[去]</span>
+                      )}
                       {atom.name}
                       {isRemovable && isSelected && (
                         <span className="text-[10px] text-amber-600 dark:text-amber-400 font-normal ml-2">
-                          (ohne möglich)
+                          (可选去)
                         </span>
                       )}
                     </span>
                     <span className="text-[10px] text-slate-400 block tabular-nums">
-                      {displayCal} kcal • P: {displayPro}g • F: {displayFat}g • Salz: {displaySalt}g
+                      {displayCal} kcal • 蛋白质: {displayPro}g • 脂肪: {displayFat}g • 盐: {displaySalt}g
                     </span>
                   </div>
 
@@ -336,7 +339,7 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
                       </div>
                     ) : (
                       <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                        Basis
+                        基础配方
                       </span>
                     )}
                   </div>
@@ -361,12 +364,12 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
               {copied ? (
                 <>
                   <Check className="w-4 h-4" />
-                  Kopiert!
+                  已复制!
                 </>
               ) : (
                 <>
                   <Copy className="w-4 h-4" />
-                  Kopieren
+                  复制数据
                 </>
               )}
             </button>
@@ -377,7 +380,7 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
               className="py-4 px-6 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-extrabold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center justify-center gap-2 transition-all text-sm flex-[2]"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
-              In den Warenkorb
+              放入我的计算盘
             </button>
           </div>
         </div>

@@ -25,7 +25,7 @@ export function MenuPanel({ onSelectItem }: MenuPanelProps) {
   }, [activeTab, searchQuery]);
 
   return (
-    <div className="max-w-md mx-auto px-4 py-5 space-y-4 animate-pop">
+    <div className="max-w-md mx-auto px-4 py-3 space-y-4 animate-pop">
       
       {/* Search Input */}
       <div className="relative">
@@ -33,7 +33,7 @@ export function MenuPanel({ onSelectItem }: MenuPanelProps) {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Nach McPlant, Big Tasty oder Pommes suchen..."
+          placeholder="搜索 McPlant, Big Tasty 或 Pommes..."
           className="w-full py-3.5 pl-11 pr-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-amber-500 shadow-sm transition-all"
         />
         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
@@ -52,7 +52,7 @@ export function MenuPanel({ onSelectItem }: MenuPanelProps) {
           <button
             key={tab.type}
             onClick={() => setActiveTab(tab.type as TabType)}
-            className={`py-2.5 px-4.5 rounded-xl font-bold text-xs transition-all whitespace-nowrap border ${
+            className={`py-2 px-4 rounded-xl font-bold text-xs transition-all whitespace-nowrap border ${
               activeTab === tab.type
                 ? 'bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/10'
                 : 'bg-white dark:bg-slate-900 border-slate-150 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
@@ -78,7 +78,7 @@ export function MenuPanel({ onSelectItem }: MenuPanelProps) {
             
             const canBeCustomized = item.atoms.some((a) => a.removable);
 
-            // Dynamic customization hint
+            // Dynamic customization hint in Chinese
             let customLabel = '';
             if (canBeCustomized) {
               const hasSauce = item.atoms.some((a) => a.removable && a.type === 'sauce');
@@ -86,15 +86,15 @@ export function MenuPanel({ onSelectItem }: MenuPanelProps) {
               const hasSalt = item.atoms.some((a) => a.removable && a.id.includes('salz'));
 
               if (item.category === 'snacks_beilagen' && hasSalt) {
-                customLabel = 'ohne Salz möglich';
+                customLabel = '可定制去盐';
               } else if (hasSauce && hasCheese) {
-                customLabel = 'ohne Soße/Käse möglich';
+                customLabel = '可定制去酱/去芝士';
               } else if (hasSauce) {
-                customLabel = 'ohne Soße möglich';
+                customLabel = '可定制去酱';
               } else if (hasCheese) {
-                customLabel = 'ohne Käse möglich';
+                customLabel = '可定制去芝士';
               } else {
-                customLabel = 'Anpassbar';
+                customLabel = '可微调配料';
               }
             }
 
@@ -109,7 +109,7 @@ export function MenuPanel({ onSelectItem }: MenuPanelProps) {
                     <span className="text-sm font-extrabold text-slate-900 dark:text-white leading-snug">{item.name}</span>
                     {item.supportedSizes && item.supportedSizes.length > 1 && (
                       <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 uppercase tracking-widest leading-none">
-                        {item.supportedSizes.join('·')}
+                        {item.supportedSizes.join('·')}杯
                       </span>
                     )}
                     {canBeCustomized && (
@@ -124,12 +124,12 @@ export function MenuPanel({ onSelectItem }: MenuPanelProps) {
                   </p>
 
                   <div className="flex gap-2 items-center text-[10px] font-bold text-slate-400">
-                    <span className="text-blue-500 font-extrabold">Protein: {proteinAtom.toFixed(1)}g</span>
+                    <span className="text-blue-500 font-extrabold">蛋白质: {proteinAtom.toFixed(1)}g</span>
                     <span>•</span>
                     {canBeCustomized ? (
-                      <span className="text-emerald-500">Min. {minCalories} kcal</span>
+                      <span className="text-emerald-500">魔改最低 {minCalories} kcal</span>
                     ) : (
-                      <span className="text-slate-350">Standardrezeptur</span>
+                      <span className="text-slate-350">标准配方</span>
                     )}
                   </div>
                 </div>
@@ -150,9 +150,9 @@ export function MenuPanel({ onSelectItem }: MenuPanelProps) {
       ) : (
         <div className="glass rounded-3xl p-12 text-center text-slate-400 dark:text-slate-500 space-y-2 border border-dashed border-slate-200 dark:border-slate-850">
           <Filter className="w-8 h-8 text-slate-300 dark:text-slate-850 mx-auto" />
-          <div className="text-sm font-semibold">Keine Produkte gefunden</div>
+          <div className="text-sm font-semibold">未找到匹配商品</div>
           <p className="text-xs max-w-[80%] mx-auto">
-            Bitte versuchen Sie einen anderen Suchbegriff oder eine andere Kategorie.
+            请尝试输入其他关键词或切换分类选项。
           </p>
         </div>
       )}

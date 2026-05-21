@@ -45,7 +45,7 @@ export function App() {
   // Clear entire tray
   const handleClearTray = () => {
     if (trayItems.length === 0) return;
-    if (window.confirm('Möchten Sie Ihr Tablett wirklich leeren? (您确定要清空计算盘吗？)')) {
+    if (window.confirm('您确定要清空当前计算盘吗？')) {
       setTrayItems([]);
     }
   };
@@ -65,7 +65,7 @@ export function App() {
     );
   }, [trayItems]);
 
-  // Format and copy calculated data to clipboard
+  // Format and copy calculated data to clipboard in Chinese
   const handleKopierenTray = () => {
     if (trayItems.length === 0) return;
 
@@ -75,18 +75,18 @@ export function App() {
           (a) => a.removable && !item.customizedAtoms[a.id]
         );
         const customParts = removedAtoms
-          .map((a) => `ohne ${a.name.replace(/\(.*\)/, '').trim()}`)
+          .map((a) => `[去${a.name.split(' (')[0]}]`)
           .join(', ');
         const sizeSuffix = item.selectedSize ? ` (${item.selectedSize})` : '';
         return `${item.menuItem.name}${sizeSuffix}${customParts ? ` ${customParts}` : ''}`;
       })
       .join(' + ');
 
-    const formattedText = `🍔 McDonald's Custom: ${grandTotals.calories} kcal | P: ${grandTotals.protein.toFixed(
+    const formattedText = `🍔 麦当劳定制餐：${grandTotals.calories} kcal | 蛋白质: ${grandTotals.protein.toFixed(
       1
-    )}g | F: ${grandTotals.fat.toFixed(1)}g | C: ${grandTotals.carbs.toFixed(
+    )}g | 脂肪: ${grandTotals.fat.toFixed(1)}g | 碳水: ${grandTotals.carbs.toFixed(
       1
-    )}g | Salt: ${grandTotals.salt.toFixed(2)}g (${itemDescriptions})`;
+    )}g | 盐: ${grandTotals.salt.toFixed(2)}g (${itemDescriptions})`;
 
     navigator.clipboard.writeText(formattedText).then(() => {
       setCopied(true);
@@ -124,10 +124,10 @@ export function App() {
           </div>
           <div className="flex flex-col">
             <span className="font-extrabold text-base tracking-tight bg-gradient-to-r from-slate-900 via-slate-800 to-amber-600 dark:from-white dark:via-slate-200 dark:to-amber-500 bg-clip-text text-transparent">
-              McNutri Calculator
+              麦当劳精准营养计算器
             </span>
             <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none">
-              Deutschland 🇩🇪
+              McDonald's Deutschland 🇩🇪
             </span>
           </div>
         </div>
@@ -136,7 +136,7 @@ export function App() {
           <button
             onClick={() => setShowInfo(!showInfo)}
             className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:opacity-80 transition-all"
-            title="Referenzwerte anzeigen"
+            title="查看膳食营养参考值"
           >
             <HelpCircle className="w-4 h-4" />
           </button>
@@ -148,18 +148,18 @@ export function App() {
         <div className="max-w-md mx-auto px-4 mt-2 animate-pop">
           <div className="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 space-y-2">
             <h4 className="font-extrabold text-xs text-slate-800 dark:text-slate-200 mb-1">
-              Referenzmengen für einen durchschnittlichen Erwachsenen (GDA)
+              每日膳食营养素参考摄入量 (欧盟 GDA 标准)
             </h4>
-            <p>Die Prozentwerte beziehen sich auf die EU-Referenzmengen:</p>
+            <p>进度条占比基于以下成年人每日标准参考摄入量计算：</p>
             <ul className="list-disc list-inside space-y-0.5 pl-1 font-semibold">
-              <li>Energie (Kalorien): 2.000 kcal</li>
-              <li>Eiweiß (Protein): 50 g</li>
-              <li>Fett: 70 g</li>
-              <li>Kohlenhydrate: 260 g</li>
-              <li>Salz (Salzäquivalent): 6,0 g</li>
+              <li>能量 (热量限额): 2000 kcal</li>
+              <li>蛋白质 (每日推荐): 50 g</li>
+              <li>脂肪 (最高限量): 70 g</li>
+              <li>碳水化合物 (标准限量): 260 g</li>
+              <li>食盐 (严控限量): 6.0 g</li>
             </ul>
             <p className="text-[10px] text-slate-400">
-              *Berechnung auf Basis der atomar ausgewählten Zutaten. Keine Erhebung personenbezogener Daten.
+              *食盐克数与纳毫克折算公式：盐 (g) = 钠 (mg) * 2.5 / 1000。本工具不保存任何用户历史隐私。
             </p>
           </div>
         </div>
@@ -173,7 +173,7 @@ export function App() {
           <div className="flex justify-between items-center">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
               <Utensils className="w-4 h-4 text-amber-500" />
-              Mein Tablett (我的餐盘)
+              我的餐盘 (Mein Tablett)
             </h3>
             {trayItems.length > 0 && (
               <button
@@ -181,7 +181,7 @@ export function App() {
                 className="text-[10px] font-bold text-rose-500 hover:text-rose-600 transition-colors flex items-center gap-1 bg-rose-500/5 py-1 px-2.5 rounded-lg border border-rose-500/10"
               >
                 <Trash2 className="w-3 h-3" />
-                Leeren
+                清空餐盘
               </button>
             )}
           </div>
@@ -193,13 +193,16 @@ export function App() {
             </span>
             <span className="text-sm font-extrabold text-slate-400">kcal</span>
           </div>
+          <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block -mt-4">
+            已选组合总热量
+          </span>
 
           {/* GDA Macro Progress Bars */}
           <div className="space-y-3">
             {/* Protein */}
             <div className="space-y-1">
               <div className="flex justify-between text-[10px] font-bold">
-                <span className="text-slate-500 dark:text-slate-400">Protein (蛋白质)</span>
+                <span className="text-slate-500 dark:text-slate-400">蛋白质</span>
                 <span className="text-blue-500 font-extrabold">
                   {grandTotals.protein.toFixed(1)}g / {REFERENCE_INTAKE.protein}g ({Math.round((grandTotals.protein / REFERENCE_INTAKE.protein) * 100)}%)
                 </span>
@@ -215,7 +218,7 @@ export function App() {
             {/* Fett */}
             <div className="space-y-1">
               <div className="flex justify-between text-[10px] font-bold">
-                <span className="text-slate-500 dark:text-slate-400">Fett (脂肪)</span>
+                <span className="text-slate-500 dark:text-slate-400">脂肪</span>
                 <span className="text-amber-500 font-extrabold">
                   {grandTotals.fat.toFixed(1)}g / {REFERENCE_INTAKE.fat}g ({Math.round((grandTotals.fat / REFERENCE_INTAKE.fat) * 100)}%)
                 </span>
@@ -231,7 +234,7 @@ export function App() {
             {/* Carbs */}
             <div className="space-y-1">
               <div className="flex justify-between text-[10px] font-bold">
-                <span className="text-slate-500 dark:text-slate-400">Kohlenhydrate (碳水)</span>
+                <span className="text-slate-500 dark:text-slate-400">碳水</span>
                 <span className="text-emerald-500 font-extrabold">
                   {grandTotals.carbs.toFixed(1)}g / {REFERENCE_INTAKE.carbs}g ({Math.round((grandTotals.carbs / REFERENCE_INTAKE.carbs) * 100)}%)
                 </span>
@@ -247,7 +250,7 @@ export function App() {
             {/* Salt */}
             <div className="space-y-1">
               <div className="flex justify-between text-[10px] font-bold">
-                <span className="text-slate-500 dark:text-slate-400">Salz (盐)</span>
+                <span className="text-slate-500 dark:text-slate-400">盐</span>
                 <span className="text-rose-500 font-extrabold">
                   {grandTotals.salt.toFixed(2)}g / {REFERENCE_INTAKE.salt}g ({Math.round((grandTotals.salt / REFERENCE_INTAKE.salt) * 100)}%)
                 </span>
@@ -262,7 +265,7 @@ export function App() {
           </div>
 
           {/* Export Action Strip */}
-          {trayItems.length > 0 && (
+          {trayItems.length > 0 ? (
             <button
               onClick={handleKopierenTray}
               className={`w-full py-4.5 rounded-2xl font-extrabold flex items-center justify-center gap-2.5 transition-all text-sm shadow-md ${
@@ -274,23 +277,27 @@ export function App() {
               {copied ? (
                 <>
                   <Check className="w-5 h-5 stroke-[2.5]" />
-                  Kopiert! (已复制到剪贴板)
+                  已复制到剪贴板!
                 </>
               ) : (
                 <>
                   <Copy className="w-5 h-5 stroke-[2.2]" />
-                  Kopieren (复制营养数据)
+                  一键复制定制餐数据 (Kopieren)
                 </>
               )}
             </button>
+          ) : (
+            <div className="p-4 bg-slate-50/50 dark:bg-slate-950/20 rounded-2xl text-center border border-dashed border-slate-200 dark:border-slate-800 text-xs text-slate-400">
+              计算盘空空如也，请在下方菜单选择单品！
+            </div>
           )}
         </div>
 
         {/* Tablett Items Section */}
         {trayItems.length > 0 && (
-          <div className="glass rounded-[2rem] p-5 shadow-sm border border-slate-100 dark:border-slate-850 space-y-3.5 animate-pop">
+          <div className="glass rounded-[2rem] p-5 shadow-sm border border-slate-100 dark:border-slate-850 space-y-3 animate-pop">
             <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 pl-1">
-              Hinzugefügte Produkte ({trayItems.length})
+              已加单品明细 ({trayItems.length})
             </h4>
             <div className="space-y-2.5 max-h-[220px] overflow-y-auto no-scrollbar pr-0.5">
               {trayItems.map((item) => {
@@ -298,8 +305,8 @@ export function App() {
                   (a) => a.removable && !item.customizedAtoms[a.id]
                 );
                 const customDescription = removedAtoms
-                  .map((a) => `ohne ${a.name.replace(/\(.*\)/, '').trim()}`)
-                  .join(', ');
+                  .map((a) => `[去${a.name.split(' (')[0]}]`)
+                  .join(' ');
 
                 return (
                   <div
@@ -313,23 +320,23 @@ export function App() {
                         </span>
                         {item.selectedSize && (
                           <span className="text-[8px] font-extrabold px-1 py-0.2 rounded bg-amber-500/10 text-amber-600 uppercase tracking-widest leading-none">
-                            {item.selectedSize}
+                            {item.selectedSize === 'S' ? '小份' : item.selectedSize === 'M' ? '中份' : '大份'}
                           </span>
                         )}
                       </div>
                       <p className="text-[10px] text-slate-400 leading-tight">
                         {customDescription ? (
-                          <span className="text-amber-600 dark:text-amber-500 font-semibold">
+                          <span className="text-rose-500 font-bold">
                             {customDescription}
                           </span>
                         ) : (
                           <span className="text-slate-350 dark:text-slate-650">
-                            Standardrezeptur
+                            标准配方
                           </span>
                         )}
                       </p>
                       <span className="text-[9px] text-slate-400 font-bold block tabular-nums">
-                        {item.calculatedNutrition.calories} kcal • P: {item.calculatedNutrition.protein.toFixed(1)}g • Salz: {item.calculatedNutrition.salt.toFixed(2)}g
+                        {item.calculatedNutrition.calories} kcal • 蛋白质: {item.calculatedNutrition.protein.toFixed(1)}g • 盐: {item.calculatedNutrition.salt.toFixed(2)}g
                       </span>
                     </div>
 
@@ -349,7 +356,7 @@ export function App() {
         {/* Separator / Headline for Restaurant Menu */}
         <div className="pt-2 px-1">
           <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-            Deutschland Speisekarte (德国麦当劳菜单)
+            德国麦当劳 Speisekarte 菜单
           </h3>
         </div>
 
