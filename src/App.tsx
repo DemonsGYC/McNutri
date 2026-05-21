@@ -14,6 +14,15 @@ const REFERENCE_INTAKE = {
   salt: 6.0       // g
 };
 
+const SIZE_LABELS: Record<string, string> = {
+  S: '小份',
+  M: '中份',
+  L: '大份',
+  '6er': '6块装',
+  '9er': '9块装',
+  '20er': '20块分享装'
+};
+
 export function App() {
   const [trayItems, setTrayItems] = useState<TrayItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
@@ -23,7 +32,7 @@ export function App() {
   // Add customized item from Drawer to calculate tray
   const handleAddTrayItem = (
     menuItem: MenuItem,
-    selectedSize: 'S' | 'M' | 'L' | undefined,
+    selectedSize: string | undefined,
     atomSelection: Record<string, boolean>,
     calculatedNutrition: { calories: number; protein: number; fat: number; carbs: number; salt: number }
   ) => {
@@ -77,7 +86,7 @@ export function App() {
         const customParts = removedAtoms
           .map((a) => `[去${a.name.split(' (')[0]}]`)
           .join(', ');
-        const sizeSuffix = item.selectedSize ? ` (${item.selectedSize})` : '';
+        const sizeSuffix = item.selectedSize ? ` (${SIZE_LABELS[item.selectedSize] || item.selectedSize})` : '';
         return `${item.menuItem.name}${sizeSuffix}${customParts ? ` ${customParts}` : ''}`;
       })
       .join(' + ');
@@ -320,7 +329,7 @@ export function App() {
                         </span>
                         {item.selectedSize && (
                           <span className="text-[8px] font-extrabold px-1 py-0.2 rounded bg-amber-500/10 text-amber-600 uppercase tracking-widest leading-none">
-                            {item.selectedSize === 'S' ? '小份' : item.selectedSize === 'M' ? '中份' : '大份'}
+                            {SIZE_LABELS[item.selectedSize] || item.selectedSize}
                           </span>
                         )}
                       </div>

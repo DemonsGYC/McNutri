@@ -7,7 +7,7 @@ interface MenuPanelProps {
   onSelectItem: (item: MenuItem) => void;
 }
 
-type TabType = 'all' | 'klassiker' | 'snacks_beilagen' | 'getraenke';
+type TabType = 'all' | 'klassiker' | 'snacks_beilagen' | 'getraenke' | 'saucen_dips' | 'fruehstueck';
 
 export function MenuPanel({ onSelectItem }: MenuPanelProps) {
   const [activeTab, setActiveTab] = useState<TabType>('all');
@@ -44,10 +44,12 @@ export function MenuPanel({ onSelectItem }: MenuPanelProps) {
       {/* Categories Tabs Slider */}
       <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
         {[
-          { type: 'all', label: 'Alle Produkte' },
-          { type: 'klassiker', label: 'Klassiker' },
-          { type: 'snacks_beilagen', label: 'Snacks & Beilagen' },
-          { type: 'getraenke', label: 'Getränke' }
+          { type: 'all', label: 'Alle 全部' },
+          { type: 'klassiker', label: 'Klassiker 主食' },
+          { type: 'snacks_beilagen', label: 'Snacks 小食' },
+          { type: 'getraenke', label: 'Getränke 饮料' },
+          { type: 'saucen_dips', label: 'Saucen & Dips 酱料' },
+          { type: 'fruehstueck', label: 'Frühstück 早餐' }
         ].map((tab) => (
           <button
             key={tab.type}
@@ -109,7 +111,7 @@ export function MenuPanel({ onSelectItem }: MenuPanelProps) {
                     <span className="text-sm font-extrabold text-slate-900 dark:text-white leading-snug">{item.name}</span>
                     {item.supportedSizes && item.supportedSizes.length > 1 && (
                       <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 uppercase tracking-widest leading-none">
-                        {item.supportedSizes.join('·')}杯
+                        {item.category === 'getraenke' ? '多杯型' : '多规格'}
                       </span>
                     )}
                     {canBeCustomized && (

@@ -14,18 +14,18 @@ export interface AtomComponent {
 export interface MenuItem {
   id: string;
   name: string;
-  category: 'klassiker' | 'snacks_beilagen' | 'getraenke';
+  category: 'klassiker' | 'snacks_beilagen' | 'getraenke' | 'saucen_dips' | 'fruehstueck';
   base_calories: number;
   atoms: AtomComponent[];
   description?: string;
   image?: string;
-  supportedSizes?: ('S' | 'M' | 'L')[];
+  supportedSizes?: string[]; // e.g., ['S', 'M', 'L'] or ['6er', '9er', '20er']
 }
 
 export interface TrayItem {
   id: string; // Unique ID for each item instance in the tray
   menuItem: MenuItem;
-  selectedSize?: 'S' | 'M' | 'L';
+  selectedSize?: string;
   customizedAtoms: Record<string, boolean>; // atomId -> whether included
   calculatedNutrition: {
     calories: number;

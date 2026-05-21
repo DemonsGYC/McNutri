@@ -8,7 +8,7 @@ interface CustomDrawerProps {
   onClose: () => void;
   onAddTrayItem: (
     item: MenuItem,
-    selectedSize: 'S' | 'M' | 'L' | undefined,
+    selectedSize: string | undefined,
     atomSelection: Record<string, boolean>,
     nutrition: { calories: number; protein: number; fat: number; carbs: number; salt: number }
   ) => void;
@@ -61,10 +61,10 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
   const [atomSelection, setAtomSelection] = useState<Record<string, boolean>>({});
   const [copied, setCopied] = useState(false);
 
-  // Beverage/Fries Sizing
+  // Beverage/Fries/Nugget Sizing
   const supportedSizes = item.supportedSizes || [];
-  const [selectedSize, setSelectedSize] = useState<'S' | 'M' | 'L'>(
-    supportedSizes.includes('M') ? 'M' : (supportedSizes[0] as 'S' | 'M' | 'L') || 'M'
+  const [selectedSize, setSelectedSize] = useState<string>(
+    supportedSizes.includes('M') ? 'M' : (supportedSizes.includes('6er') ? '6er' : supportedSizes[0] || 'M')
   );
 
   // Re-initialize selection when drawer changes
@@ -77,15 +77,18 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
     setCopied(false);
 
     const sizes = item.supportedSizes || [];
-    setSelectedSize(sizes.includes('M') ? 'M' : (sizes[0] as 'S' | 'M' | 'L') || 'M');
+    setSelectedSize(sizes.includes('M') ? 'M' : (sizes.includes('6er') ? '6er' : sizes[0] || 'M'));
   }, [item]);
 
-  // Sizing Multiplier (S = 0.75, M = 1.0, L = 1.4)
+  // Sizing Multiplier (S = 0.75, M = 1.0, L = 1.4, 6er = 1.0, 9er = 1.5, 20er = 3.33)
   const sizeMultiplier = useMemo(() => {
     if (!item.supportedSizes || item.supportedSizes.length === 0) return 1.0;
     switch (selectedSize) {
       case 'S': return 0.75;
       case 'L': return 1.40;
+      case '6er': return 1.00;
+      case '9er': return 1.50;
+      case '20er': return 3.33;
       case 'M':
       default:
         return 1.00;
@@ -135,8 +138,16 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
   const handleKopieren = () => {
     const removedAtoms = item.atoms.filter((a) => a.removable && !atomSelection[a.id]);
     const customParts = removedAtoms.map((a) => `[去${a.name.split(' (')[0]}]`).join(', ');
+    const sizeLabels: Record<string, string> = {
+      S: '小份',
+      M: '中份',
+      L: '大份',
+      '6er': '6块装',
+      '9er': '9块装',
+      '20er': '20块分享装'
+    };
     const sizeSuffix = item.supportedSizes && item.supportedSizes.length > 1 
-      ? ` (${selectedSize === 'S' ? '小份' : selectedSize === 'M' ? '中份' : '大份'})` 
+      ? ` (${sizeLabels[selectedSize] || selectedSize})` 
       : '';
     const itemDescription = `${item.name}${sizeSuffix}${customParts ? ` ${customParts}` : ''}`;
 
@@ -259,19 +270,26 @@ export function CustomDrawer({ item, onClose, onAddTrayItem }: CustomDrawerProps
               </h3>
               <div className="bg-slate-100 dark:bg-slate-950/40 p-1 rounded-2xl flex relative border border-slate-200/50 dark:border-slate-800/80">
                 {supportedSizes.map((sz) => {
-                  const sizeLabels = { S: 'S (小份)', M: 'M (中份)', L: 'L (大份)' };
+                  const sizeLabels: Record<string, string> = {
+                    S: 'S (小份)',
+                    M: 'M (中份)',
+                    L: 'L (大份)',
+                    '6er': '6块装',
+                    '9er': '9块装',
+                    '20er': '20块分享装'
+                  };
                   const isSelected = selectedSize === sz;
                   return (
                     <button
                       key={sz}
-                      onClick={() => setSelectedSize(sz as 'S' | 'M' | 'L')}
+                      onClick={() => setSelectedSize(sz)}
                       className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all duration-205 relative z-10 ${
                         isSelected
                           ? 'bg-white dark:bg-slate-850 text-amber-500 shadow-sm border border-slate-100/50 dark:border-slate-800/60'
                           : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-250'
                       }`}
                     >
-                      {sizeLabels[sz as 'S' | 'M' | 'L']}
+                      {sizeLabels[sz] || sz}
                     </button>
                   );
                 })}

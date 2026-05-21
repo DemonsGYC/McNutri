@@ -1,6 +1,7 @@
 import type { MenuItem } from '../types';
 
 export const FOOD_DATABASE: MenuItem[] = [
+  // ================= Klassiker (主食) =================
   {
     id: 'de_mcd_mcplant',
     name: 'McPlant®',
@@ -48,6 +49,98 @@ export const FOOD_DATABASE: MenuItem[] = [
     ]
   },
   {
+    id: 'de_mcd_bigmac',
+    name: 'Big Mac®',
+    category: 'klassiker',
+    base_calories: 545,
+    description: 'Zwei Rindfleischpatties, Schmelzkäse, knackiger Salat, Gurken, Zwiebeln und die unnachahmliche Big Mac Soße.',
+    atoms: [
+      { id: 'bigmac_bun', name: '三层芝麻面包 (Big Mac Bun)', type: 'carb', calories: 180, protein: 5.5, fat: 2.0, carbs: 35, salt: 0.45, removable: false, default: true },
+      { id: 'bigmac_beef', name: '双层纯牛肉饼 (Beef-Patties)', type: 'base', calories: 180, protein: 18.5, fat: 11.0, carbs: 0, salt: 0.30, removable: false, default: true },
+      { id: 'bigmac_sauce', name: '特制巨无霸酱 (Big Mac Soße)', type: 'sauce', calories: 105, protein: 0.5, fat: 10.5, carbs: 2.0, salt: 0.65, removable: true, default: true },
+      { id: 'bigmac_cheese', name: '切达芝士片 (Cheddar-Käse)', type: 'cheese', calories: 60, protein: 3.5, fat: 5.0, carbs: 0.5, salt: 0.45, removable: true, default: true },
+      { id: 'bigmac_lettuce', name: '新鲜生菜丝 (Eisbergsalat)', type: 'topping', calories: 10, protein: 0.3, fat: 0, carbs: 1.0, salt: 0.05, removable: true, default: true },
+      { id: 'bigmac_pickle', name: '清脆酸黄瓜 (Gewürzgurken)', type: 'topping', calories: 5, protein: 0.1, fat: 0, carbs: 1.5, salt: 0.35, removable: true, default: true },
+      { id: 'bigmac_onion', name: '洋葱碎 (Zwiebeln)', type: 'topping', calories: 5, protein: 0.1, fat: 0, carbs: 1.0, salt: 0.05, removable: true, default: true }
+    ]
+  },
+  {
+    id: 'de_mcd_royalkaese',
+    name: 'Hamburger Royal® Käse',
+    category: 'klassiker',
+    base_calories: 505,
+    description: 'Saftiges Rindfleischpatty, reichlich Käse, Heinz Ketchup, Senf, Zwiebeln und Gurke auf softem Sesambrötchen.',
+    atoms: [
+      { id: 'royalkaese_bun', name: '皇家芝麻面包 (Royal Bun)', type: 'carb', calories: 165, protein: 5.2, fat: 2.0, carbs: 31, salt: 0.45, removable: false, default: true },
+      { id: 'royalkaese_beef', name: '皇家大牛肉饼 (Large Beef-Patty)', type: 'base', calories: 210, protein: 20.8, fat: 14.5, carbs: 0, salt: 0.35, removable: false, default: true },
+      { id: 'royalkaese_cheese', name: '切达芝士 (Cheddar-Käse)', type: 'cheese', calories: 110, protein: 6.8, fat: 10.0, carbs: 1.0, salt: 0.90, removable: true, default: true },
+      { id: 'royalkaese_ketchup', name: '美式番茄酱 (Heinz Ketchup)', type: 'sauce', calories: 15, protein: 0.1, fat: 0, carbs: 3.5, salt: 0.40, removable: true, default: true },
+      { id: 'royalkaese_mustard', name: '黄芥末酱 (Senf)', type: 'sauce', calories: 3, protein: 0.1, fat: 0.1, carbs: 0.2, salt: 0.10, removable: true, default: true },
+      { id: 'royalkaese_pickle', name: '清脆酸黄瓜片 (Gewürzgurken)', type: 'topping', calories: 5, protein: 0.1, fat: 0, carbs: 1.5, salt: 0.35, removable: true, default: true },
+      { id: 'royalkaese_onion', name: '新鲜洋葱碎 (Zwiebeln)', type: 'topping', calories: 5, protein: 0.1, fat: 0, carbs: 1.2, salt: 0.05, removable: true, default: true }
+    ]
+  },
+  {
+    id: 'de_mcd_royalts',
+    name: 'Hamburger Royal® TS',
+    category: 'klassiker',
+    base_calories: 536,
+    description: 'Bestehend aus Rindfleischpatty, Käse, frischem Salat, Tomaten, Zwiebeln und cremiger Sandwich-Soße.',
+    atoms: [
+      { id: 'royalts_bun', name: '皇家芝麻面包 (Royal Bun)', type: 'carb', calories: 165, protein: 5.2, fat: 2.0, carbs: 31, salt: 0.45, removable: false, default: true },
+      { id: 'royalts_beef', name: '皇家大牛肉饼 (Large Beef-Patty)', type: 'base', calories: 210, protein: 20.8, fat: 14.5, carbs: 0, salt: 0.69, removable: false, default: true },
+      { id: 'royalts_sauce', name: '特制皇家沙拉酱 (Sandwich-Soße)', type: 'sauce', calories: 80, protein: 0.1, fat: 8.2, carbs: 1.2, salt: 0.20, removable: true, default: true },
+      { id: 'royalts_cheese', name: '切达芝士 (Cheddar-Käse)', type: 'cheese', calories: 55, protein: 3.4, fat: 5.0, carbs: 0.5, salt: 0.45, removable: true, default: true },
+      { id: 'royalts_lettuce', name: '新鲜生菜丝 (Eisbergsalat)', type: 'topping', calories: 10, protein: 0.3, fat: 0, carbs: 1.0, salt: 0.05, removable: true, default: true },
+      { id: 'royalts_tomato', name: '鲜切番茄 (Tomaten)', type: 'topping', calories: 12, protein: 0.4, fat: 0.1, carbs: 1.8, salt: 0.01, removable: true, default: true },
+      { id: 'royalts_onion', name: '新鲜洋葱片 (Zwiebeln)', type: 'topping', calories: 5, protein: 0.1, fat: 0, carbs: 1.0, salt: 0.05, removable: true, default: true }
+    ]
+  },
+  {
+    id: 'de_mcd_mcchicken',
+    name: 'McChicken® Classic',
+    category: 'klassiker',
+    base_calories: 440,
+    description: 'Feines, paniertes Hähnchenbrustfleisch, knackiger Eisbergsalat und würzige Sandwich-Soße auf klassischem Sesambrötchen.',
+    atoms: [
+      { id: 'mcchicken_bun', name: '芝麻汉堡面包 (Sesame Bun)', type: 'carb', calories: 150, protein: 5.0, fat: 2.0, carbs: 28, salt: 0.45, removable: false, default: true },
+      { id: 'mcchicken_patty', name: '香脆炸鸡排 (Chicken Patty)', type: 'base', calories: 200, protein: 12.5, fat: 9.0, carbs: 17, salt: 1.10, removable: false, default: true },
+      { id: 'mcchicken_sauce', name: '特制沙拉酱 (Sandwich-Soße)', type: 'sauce', calories: 80, protein: 0.1, fat: 8.0, carbs: 1.0, salt: 0.20, removable: true, default: true },
+      { id: 'mcchicken_lettuce', name: '新鲜生菜丝 (Eisbergsalat)', type: 'topping', calories: 10, protein: 0.4, fat: 0, carbs: 1.0, salt: 0.05, removable: true, default: true }
+    ]
+  },
+  {
+    id: 'de_mcd_filetofish',
+    name: 'Filet-o-Fish®',
+    category: 'klassiker',
+    base_calories: 375,
+    description: 'Goldbraun paniertes Fischfilet aus nachhaltiger Fischerei, herzhafte Tartar-Soße und eine halbe Scheibe Schmelzkäse.',
+    atoms: [
+      { id: 'filetofish_bun', name: '柔软蒸面包 (Steamed Bun)', type: 'carb', calories: 130, protein: 4.5, fat: 2.0, carbs: 24, salt: 0.45, removable: false, default: true },
+      { id: 'filetofish_fish', name: '金黄鳕鱼排 (Fish Patty)', type: 'base', calories: 140, protein: 9.0, fat: 4.0, carbs: 11, salt: 0.60, removable: false, default: true },
+      { id: 'filetofish_sauce', name: '特制塔塔酱 (Tartar-Sauce)', type: 'sauce', calories: 75, protein: 0.1, fat: 4.5, carbs: 1.5, salt: 0.40, removable: true, default: true },
+      { id: 'filetofish_cheese', name: '切达芝士片半片 (Cheddar-Käse)', type: 'cheese', calories: 30, protein: 1.7, fat: 2.5, carbs: 0.25, salt: 0.25, removable: true, default: true }
+    ]
+  },
+  {
+    id: 'de_mcd_triplecheese',
+    name: 'Triple Cheeseburger',
+    category: 'klassiker',
+    base_calories: 603,
+    description: 'Drei saftige Rindfleischpatties, dreifach Schmelzkäse, Senf, Heinz Ketchup, Gewürzgurken und frische Zwiebeln.',
+    atoms: [
+      { id: 'triplecheese_bun', name: '标准汉堡面包 (Standard Bun)', type: 'carb', calories: 140, protein: 4.5, fat: 2.0, carbs: 26, salt: 0.45, removable: false, default: true },
+      { id: 'triplecheese_beef', name: '三片纯牛肉饼 (Beef-Patties)', type: 'base', calories: 270, protein: 25.5, fat: 17.0, carbs: 0, salt: 0.45, removable: false, default: true },
+      { id: 'triplecheese_cheese', name: '三片切达芝士 (Cheddar-Käse)', type: 'cheese', calories: 165, protein: 10.2, fat: 15.0, carbs: 1.5, salt: 1.35, removable: true, default: true },
+      { id: 'triplecheese_ketchup', name: '美式番茄酱 (Heinz Ketchup)', type: 'sauce', calories: 15, protein: 0.1, fat: 0, carbs: 3.5, salt: 0.40, removable: true, default: true },
+      { id: 'triplecheese_mustard', name: '黄芥末酱 (Senf)', type: 'sauce', calories: 3, protein: 0.1, fat: 0.1, carbs: 0.2, salt: 0.10, removable: true, default: true },
+      { id: 'triplecheese_pickle', name: '清脆酸黄瓜片 (Gewürzgurken)', type: 'topping', calories: 5, protein: 0.1, fat: 0, carbs: 1.5, salt: 0.35, removable: true, default: true },
+      { id: 'triplecheese_onion', name: '脱水洋葱碎 (Zwiebeln)', type: 'topping', calories: 5, protein: 0.1, fat: 0, carbs: 1.0, salt: 0.05, removable: true, default: true }
+    ]
+  },
+
+  // ================= Snacks & Beilagen (小食/配菜) =================
+  {
     id: 'de_mcd_pommes',
     name: 'Pommes Frites',
     category: 'snacks_beilagen',
@@ -60,25 +153,49 @@ export const FOOD_DATABASE: MenuItem[] = [
     ]
   },
   {
-    id: 'de_mcd_sourcream',
-    name: 'Sour Cream Dip',
+    id: 'de_mcd_mcnuggets',
+    name: 'Chicken McNuggets®',
     category: 'snacks_beilagen',
-    base_calories: 85,
-    description: 'Erfrischender Dip mit feiner Kräuter- und Knoblauchnote.',
+    base_calories: 270,
+    description: 'Knusprig panierte Hähnchenbruststücke, außen super kross und innen zart. Beliebt in 6er, 9er oder 20er Portionen.',
+    supportedSizes: ['6er', '9er', '20er'],
     atoms: [
-      { id: 'dip_sourcream', name: '酸乳酪酱 (Sour Cream)', type: 'sauce', calories: 85, protein: 0.9, fat: 7.8, carbs: 2.3, salt: 0.26, removable: false, default: true }
+      { id: 'mcnuggets_meat', name: '黄金鸡块 (McNuggets)', type: 'base', calories: 270, protein: 16.0, fat: 16.0, carbs: 16.0, salt: 0.90, removable: false, default: true }
     ]
   },
   {
-    id: 'de_mcd_suesssauer',
-    name: 'Süßsauer-Soße',
+    id: 'de_mcd_gitterkartoffeln',
+    name: 'Gitterkartoffeln',
     category: 'snacks_beilagen',
-    base_calories: 52,
-    description: 'Klassischer Dip mit fruchtigem Geschmack von Aprikosen und Pfirsichen.',
+    base_calories: 406,
+    description: 'Knusprig und herzhaft gewürzte Kartoffel-Gitter. Der absolute Liebling als Special-Beilage.',
     atoms: [
-      { id: 'dip_suesssauer', name: '经典甜酸酱 (Süßsauer-Soße)', type: 'sauce', calories: 52, protein: 0.2, fat: 0.1, carbs: 12.5, salt: 0.32, removable: false, default: true }
+      { id: 'gitterkartoffeln_fries', name: '金黄卷卷/网状薯条 (Gitterkartoffeln)', type: 'carb', calories: 406, protein: 4.2, fat: 21.5, carbs: 49.0, salt: 2.00, removable: false, default: true }
     ]
   },
+  {
+    id: 'de_mcd_netzkartoffeln',
+    name: 'Netzkartoffeln',
+    category: 'snacks_beilagen',
+    base_calories: 340,
+    description: 'Kartoffel-Waffeln im Netz-Schnitt. Super knusprige Textur und herzhaft gewürzt.',
+    atoms: [
+      { id: 'netzkartoffeln_waffles', name: '网格华夫薯饼 (Netzkartoffeln)', type: 'carb', calories: 340, protein: 3.8, fat: 17.5, carbs: 41.0, salt: 1.80, removable: false, default: true }
+    ]
+  },
+  {
+    id: 'de_mcd_gartensalat',
+    name: 'Side Salad (Gartensalat)',
+    category: 'snacks_beilagen',
+    base_calories: 15,
+    description: 'Ein knackiger Beilagensalat aus frischen Salatblättern mit Kirschtomaten und feinen Gurkenscheiben.',
+    atoms: [
+      { id: 'gartensalat_leaves', name: '混合生菜叶 (Blattsalat)', type: 'topping', calories: 10, protein: 0.6, fat: 0.1, carbs: 1.5, salt: 0.02, removable: false, default: true },
+      { id: 'gartensalat_tomgurk', name: '圣女果与黄瓜片 (Cherrytomaten & Gurkenscheiben)', type: 'topping', calories: 5, protein: 0.3, fat: 0, carbs: 1.0, salt: 0.01, removable: true, default: true }
+    ]
+  },
+
+  // ================= Getränke (饮料) =================
   {
     id: 'de_mcd_cola_zero',
     name: 'Coca-Cola Zero Sugar',
@@ -124,6 +241,98 @@ export const FOOD_DATABASE: MenuItem[] = [
     supportedSizes: ['M', 'L'],
     atoms: [
       { id: 'kaffee_schwarz_liquid', name: '浓郁黑咖啡 (Kaffee Schwarz)', type: 'other', calories: 6, protein: 0.2, fat: 0, carbs: 1.1, salt: 0.01, removable: false, default: true }
+    ]
+  },
+
+  // ================= Saucen & Dips (酱料/蘸酱) =================
+  {
+    id: 'de_mcd_suesssauer',
+    name: 'Süßsauer-Soße',
+    category: 'saucen_dips',
+    base_calories: 52,
+    description: 'Klassischer Dip mit fruchtigem Geschmack von Aprikosen und Pfirsichen.',
+    atoms: [
+      { id: 'dip_suesssauer', name: '经典甜酸酱 (Süßsauer-Soße)', type: 'sauce', calories: 52, protein: 0.2, fat: 0.1, carbs: 12.5, salt: 0.32, removable: false, default: true }
+    ]
+  },
+  {
+    id: 'de_mcd_bbq',
+    name: 'Barbecue-Soße',
+    category: 'saucen_dips',
+    base_calories: 45,
+    description: 'Würzige Soße mit rauchigem Barbecue-Aroma.',
+    atoms: [
+      { id: 'dip_bbq', name: '烟熏烧烤酱 (Barbecue-Soße)', type: 'sauce', calories: 45, protein: 0.4, fat: 0.1, carbs: 10.0, salt: 0.45, removable: false, default: true }
+    ]
+  },
+  {
+    id: 'de_mcd_ketchup',
+    name: 'Ketchup (Heinz)',
+    category: 'saucen_dips',
+    base_calories: 30,
+    description: 'Traditionell fruchtiger Tomatenketchup von Heinz.',
+    atoms: [
+      { id: 'dip_ketchup', name: '番茄沙司 (Ketchup)', type: 'sauce', calories: 30, protein: 0.3, fat: 0.1, carbs: 7.0, salt: 0.35, removable: false, default: true }
+    ]
+  },
+  {
+    id: 'de_mcd_mayo',
+    name: 'Mayonnaise (Heinz)',
+    category: 'saucen_dips',
+    base_calories: 90,
+    description: 'Fein-cremige Mayonnaise mit ausgewogenem Geschmack.',
+    atoms: [
+      { id: 'dip_mayo', name: '香浓美乃滋 (Mayonnaise)', type: 'sauce', calories: 90, protein: 0.2, fat: 9.8, carbs: 0.5, salt: 0.25, removable: false, default: true }
+    ]
+  },
+  {
+    id: 'de_mcd_sourcream',
+    name: 'Sour Cream Dip',
+    category: 'saucen_dips',
+    base_calories: 85,
+    description: 'Erfrischender Sour Cream Dip mit Kräutern und Sauerrahmaroma.',
+    atoms: [
+      { id: 'dip_sourcream', name: '酸乳酪酱 (Sour Cream)', type: 'sauce', calories: 85, protein: 0.9, fat: 7.8, carbs: 2.3, salt: 0.26, removable: false, default: true }
+    ]
+  },
+
+  // ================= Frühstück (早餐/麦满分) =================
+  {
+    id: 'de_mcd_mcmuffin_bacon',
+    name: 'McMuffin® Bacon & Egg',
+    category: 'fruehstueck',
+    base_calories: 350,
+    description: 'Getoasteter Weizenmuffin belegt mit knusprigem Bacon, einem frisch aufgeschlagenen Ei und Schmelzkäsezubereitung.',
+    atoms: [
+      { id: 'mcmuffin_bacon_muffin', name: '麦满分英式面包 (English Muffin)', type: 'carb', calories: 140, protein: 5.2, fat: 1.2, carbs: 26, salt: 0.50, removable: false, default: true },
+      { id: 'mcmuffin_bacon_egg', name: '鲜煎鸡蛋 (Ei)', type: 'base', calories: 80, protein: 6.8, fat: 5.5, carbs: 0.5, salt: 0.30, removable: true, default: true },
+      { id: 'mcmuffin_bacon_meat', name: '香脆培根 (Bacon)', type: 'topping', calories: 60, protein: 4.5, fat: 4.5, carbs: 0.1, salt: 0.45, removable: true, default: true },
+      { id: 'mcmuffin_bacon_cheese', name: '切达芝士片 (Cheddar-Käse)', type: 'cheese', calories: 70, protein: 4.1, fat: 5.6, carbs: 0.5, salt: 0.42, removable: true, default: true }
+    ]
+  },
+  {
+    id: 'de_mcd_mcmuffin_sausage',
+    name: 'McMuffin® Sausage & Egg',
+    category: 'fruehstueck',
+    base_calories: 428,
+    description: 'Getoasteter Weizenmuffin belegt mit würzigem Schweinefleischpatty, frisch zubereitetem Ei und Schmelzkäse.',
+    atoms: [
+      { id: 'mcmuffin_sausage_muffin', name: '麦满分英式面包 (English Muffin)', type: 'carb', calories: 140, protein: 5.2, fat: 1.2, carbs: 26, salt: 0.50, removable: false, default: true },
+      { id: 'mcmuffin_sausage_meat', name: '德式风味猪肉饼 (Sausage Patty)', type: 'base', calories: 138, protein: 9.0, fat: 12.5, carbs: 0.3, salt: 0.60, removable: false, default: true },
+      { id: 'mcmuffin_sausage_egg', name: '鲜煎鸡蛋 (Ei)', type: 'base', calories: 80, protein: 6.8, fat: 5.5, carbs: 0.5, salt: 0.30, removable: true, default: true },
+      { id: 'mcmuffin_sausage_cheese', name: '切达芝士片 (Cheddar-Käse)', type: 'cheese', calories: 70, protein: 4.1, fat: 5.6, carbs: 0.5, salt: 0.42, removable: true, default: true }
+    ]
+  },
+  {
+    id: 'de_mcd_mcmuffin_egg',
+    name: 'McMuffin® Egg',
+    category: 'fruehstueck',
+    base_calories: 298,
+    description: 'Getoasteter Weizenmuffin belegt mit einem frischen Ei, Butter und schmelzendem Cheddarkäse.',
+    atoms: [
+      { id: 'mcmuffin_egg_muffin', name: '麦满分英式面包 (English Muffin)', type: 'carb', calories: 140, protein: 5.2, fat: 1.2, carbs: 26, salt: 0.50, removable: false, default: true },
+      { id: 'mcmuffin_egg_egg', name: '鲜煎鸡蛋 (Ei)', type: 'base', calories: 80, protein: 6.8, fat: 5.5, carbs: 0.5, salt: 0.30, removable: true, default: true },
+      { id: 'mcmuffin_egg_cheese', name: '切达芝士片 (Cheddar-Käse)', type: 'cheese', calories: 78, protein: 4.5, fat: 6.0, carbs: 0.5, salt: 0.45, removable: true, default: true }
     ]
   }
 ];
